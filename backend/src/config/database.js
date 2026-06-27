@@ -1,4 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+/**
+ * Prisma client singleton.
+ * Uses the default import workaround for CommonJS compatibility.
+ */
+
+import pkg from "@prisma/client";
+const { PrismaClient } = pkg;
 
 const prisma = new PrismaClient({
   log:
