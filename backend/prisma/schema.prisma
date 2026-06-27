@@ -1,0 +1,764 @@
+// ============================================
+// 1. DATASOURCE & GENERATOR
+// ============================================
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ============================================
+// 2. ENUMS
+// ============================================
+
+enum UserRole {
+  SYSTEM_ADMIN
+  PROPERTY_MANAGER
+  TENANT
+  LANDLORD
+  ACCOUNTANT
+  LEGAL_ADMIN
+}
+
+enum AssetType {
+  APARTMENT
+  OFFICE
+  VILLA
+  WAREHOUSE
+  LAND
+  COMMERCIAL_SPACE
+  RESIDENTIAL_COMPLEX
+}
+
+enum AssetStatus {
+  AVAILABLE
+  RENTED
+  UNDER_MAINTENANCE
+  RESERVED
+  UNAVAILABLE
+  SOLD
+}
+
+enum ContractStatus {
+  DRAFT
+  ACTIVE
+  EXPIRED
+  TERMINATED
+  RENEWED
+  CANCELLED
+  UNDER_REVIEW
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  PARTIALLY_PAID
+  REFUNDED
+  CANCELLED
+  FAILED
+}
+
+enum PaymentMethod {
+  BANK_TRANSFER
+  ONLINE_PAYMENT
+  CASH
+  CHECK
+  CREDIT_CARD
+  DEBIT_CARD
+  WALLET
+  INSTALLMENT
+}
+
+enum VehicleStatus {
+  AVAILABLE
+  RENTED
+  UNDER_MAINTENANCE
+  INSURANCE_PENDING
+  ACCIDENT_REPAIR
+  RESERVED
+}
+
+enum POAStatus {
+  ACTIVE
+  EXPIRED
+  REVOKED
+  SUSPENDED
+  PENDING_APPROVAL
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+  CRITICAL
+}
+
+enum MaintenanceStatus {
+  REPORTED
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+  DEFFERED
+}
+
+enum NotificationType {
+  PAYMENT_REMINDER
+  CONTRACT_EXPIRY
+  MAINTENANCE_UPDATE
+  DOCUMENT_SIGNING
+  LEGAL_UPDATE
+  SYSTEM_ALERT
+  PROMOTIONAL
+}
+
+enum DocumentType {
+  CONTRACT
+  POA
+  INVOICE
+  RECEIPT
+  MAINTENANCE_REPORT
+  INSURANCE_POLICY
+  PROPERTY_DEED
+  TENANT_APPLICATION
+  EVICTION_NOTICE
+}
+
+// ============================================
+// 3. MODELS
+// ============================================
+
+model User {
+  id                 String          @id @default(uuid())
+  email              String          @unique
+  password           String
+  firstName          String
+  lastName           String
+  phone              String?
+  mobile             String?
+  nationalId         String?         @unique
+  role               UserRole        @default(TENANT)
+
+  // Profile Details
+  profileImage       String?
+  dateOfBirth        DateTime?
+  address            String?
+  city               String?
+  postalCode         String?
+  emergencyContact   Json?
+  preferredLanguage  String          @default("en")
+
+  // Account Settings
+  emailVerified      Boolean         @default(false)
+  phoneVerified      Boolean         @default(false)
+  twoFactorEnabled   Boolean         @default(false)
+  twoFactorSecret    String?
+  lastLogin          DateTime?
+  refreshToken       String?
+
+  // Audit
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+  createdBy          String?
+  isActive           Boolean         @default(true)
+  deletedAt          DateTime?
+
+  // Relations
+  propertiesOwned    Property[]      @relation("PropertyOwner")
+  propertiesManaged  Property[]      @relation("PropertyManager")
+  vehiclesOwned      Vehicle[]       @relation("VehicleOwner")
+  vehiclesManaged    Vehicle[]       @relation("VehicleManager")
+  contractsAsTenant  Contract[]      @relation("TenantContracts")
+  contractsAsLandlord Contract[]     @relation("LandlordContracts")
+  contractsAsManager  Contract[]     @relation("ManagerContracts")
+  payments           Payment[]
+  poaAsGrantor       PowerOfAttorney[] @relation("Grantor")
+  poaAsGrantee       PowerOfAttorney[] @relation("Grantee")
+  maintenanceRequests Maintenance[]
+  notifications      Notification[]
+  documents          Document[]
+  auditLogs          AuditLog[]
+  contractReviews    ContractReview[]
+  subscriptions      Subscription[]
+  inspections        Inspection[]
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+}
+
+model Property {
+  id                  String          @id @default(uuid())
+  title               String
+  description         String?
+  assetType           AssetType
+  status              AssetStatus     @default(AVAILABLE)
+  area                Float
+  bedrooms            Int?
+  bathrooms           Float?
+  furnished           Boolean         @default(false)
+  yearBuilt           Int?
+
+  // Location
+  address             String
+  city                String
+  district            String?
+  neighborhood        String?
+  latitude            Float?
+  longitude           Float?
+
+  // Financial
+  marketValue         Float           @default(0)
+  rentalRate          Float           @default(0)
+  securityDeposit     Float?
+  maintenanceFee      Float?
+  utilityFee          Float?
+
+  // Specifications
+  features            Json?
+  floorNumber         Int?
+  totalFloors         Int?
+  parkingSpots        Int?
+  storageRooms        Int?
+  hasElevator         Boolean         @default(false)
+  hasGarden           Boolean         @default(false)
+  hasPool             Boolean         @default(false)
+  hasGym              Boolean         @default(false)
+  hasSecurity         Boolean         @default(false)
+  isPetFriendly       Boolean         @default(false)
+  isSmokingAllowed    Boolean         @default(false)
+
+  // Legal
+  deedNumber          String?
+  propertyTaxNumber   String?
+  zoningCode          String?
+  insurancePolicy     String?
+
+  // Relations
+  ownerId             String
+  owner               User            @relation("PropertyOwner", fields: [ownerId], references: [id])
+  managerId           String?
+  manager             User?           @relation("PropertyManager", fields: [managerId], references: [id])
+  contracts           Contract[]
+  maintenanceRequests Maintenance[]
+  inspections         Inspection[]
+  documents           Document[]
+  powerOfAttorneys    PowerOfAttorney[]
+  images              PropertyImage[]
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  isActive            Boolean         @default(true)
+  deletedAt           DateTime?
+
+  @@index([status])
+  @@index([city])
+  @@index([assetType])
+  @@index([ownerId])
+  @@index([managerId])
+}
+
+model Vehicle {
+  id                  String          @id @default(uuid())
+  make                String
+  model               String
+  year                Int
+  vin                 String          @unique
+  licensePlate        String          @unique
+  color               String?
+  mileage             Int?
+  fuelType            String?
+  transmission        String?
+  engineSize          Float?
+  numberOfDoors       Int?
+  seatingCapacity     Int?
+
+  // Status & Availability
+  status              VehicleStatus   @default(AVAILABLE)
+  condition           String?
+  insuranceNumber     String?
+  insuranceExpiry     DateTime?
+  registrationExpiry  DateTime?
+
+  // Financial
+  dailyRate           Float
+  monthlyRate         Float
+  purchasePrice       Float
+  marketValue         Float?
+  securityDeposit     Float?
+
+  // Features
+  features            Json?
+  maintenanceHistory  Json?
+  accidentHistory     Json?
+  lastServiceDate     DateTime?
+  nextServiceDate     DateTime?
+
+  // Relations
+  ownerId             String
+  owner               User            @relation("VehicleOwner", fields: [ownerId], references: [id])
+  managerId           String?
+  manager             User?           @relation("VehicleManager", fields: [managerId], references: [id])
+  contracts           Contract[]
+  maintenanceRequests Maintenance[]
+  documents           Document[]
+  powerOfAttorneys    PowerOfAttorney[]
+  images              VehicleImage[]
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  isActive            Boolean         @default(true)
+  deletedAt           DateTime?
+
+  @@index([status])
+  @@index([vin])
+  @@index([licensePlate])
+  @@index([ownerId])
+  @@index([managerId])
+}
+
+model Contract {
+  id                  String          @id @default(uuid())
+  contractNumber      String          @unique
+  title               String
+  description         String?
+  status              ContractStatus  @default(DRAFT)
+  startDate           DateTime
+  endDate             DateTime
+  renewalDate         DateTime?
+  terminationDate     DateTime?
+
+  // Financial
+  monthlyRent         Float
+  securityDeposit     Float
+  latePaymentPenalty  Float           @default(0)
+  maintenanceFee      Float?
+  utilityFee          Float?
+  totalAmount         Float
+
+  // Payment Schedule
+  paymentDay          Int?
+  paymentFrequency    String          @default("MONTHLY")
+  firstPaymentDate    DateTime?
+  lastPaymentDate     DateTime?
+
+  // Asset Reference (polymorphic)
+  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  assetId             String
+
+  // Parties
+  tenantId            String
+  tenant              User            @relation("TenantContracts", fields: [tenantId], references: [id])
+  landlordId          String
+  landlord            User            @relation("LandlordContracts", fields: [landlordId], references: [id])
+  managerId           String?
+  manager             User?           @relation("ManagerContracts", fields: [managerId], references: [id])
+
+  // Legal
+  termsAndConditions  Json?
+  specialClauses      Json?
+  documentUrl         String?
+  digitalSignature    String?
+  signatureDate       DateTime?
+  notarizedBy         String?
+  notaryDate          DateTime?
+  notaryNumber        String?
+
+  // Relations
+  payments            Payment[]
+  contractReviews     ContractReview[]
+  documents           Document[]
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  isActive            Boolean         @default(true)
+  deletedAt           DateTime?
+
+  @@index([status])
+  @@index([tenantId])
+  @@index([landlordId])
+  @@index([assetType, assetId])
+  @@index([startDate, endDate])
+}
+
+model Payment {
+  id                  String          @id @default(uuid())
+  paymentNumber       String          @unique
+  contractId          String
+  contract            Contract        @relation(fields: [contractId], references: [id])
+  amount              Float
+  tax                 Float?
+  totalAmount         Float
+  dueDate             DateTime
+  paymentDate         DateTime?
+  paidAmount          Float?
+  remainingBalance    Float?
+
+  // Method
+  method              PaymentMethod
+  methodDetails       Json?
+  transactionId       String?
+  referenceNumber     String?
+
+  // Status
+  status              PaymentStatus   @default(PENDING)
+  statusReason        String?
+  statusUpdatedAt     DateTime?
+
+  // Invoice/Receipt
+  invoiceNumber       String?
+  invoiceDate         DateTime?
+  invoiceUrl          String?
+  receiptNumber       String?
+  receiptDate         DateTime?
+  receiptUrl          String?
+
+  // Late Payment
+  lateFee             Float?
+  penaltyApplied      Boolean         @default(false)
+  penaltyDate         DateTime?
+
+  // Processing
+  processedBy         String?
+  processedAt         DateTime?
+  approvalRequired    Boolean         @default(false)
+  approvedBy          String?
+  approvedAt          DateTime?
+
+  // Recurring
+  isRecurring         Boolean         @default(false)
+  recurrenceId        String?
+  paymentSchedule     Json?
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  deletedAt           DateTime?
+
+  @@index([contractId])
+  @@index([status])
+  @@index([dueDate])
+  @@index([paymentDate])
+  @@index([method])
+  @@index([transactionId])
+}
+
+model PowerOfAttorney {
+  id                  String          @id @default(uuid())
+  poaNumber           String          @unique
+  title               String
+  description         String?
+  scope               String          // FULL, LIMITED, SPECIFIC
+  scopeDetails        Json?
+  status              POAStatus       @default(PENDING_APPROVAL)
+  startDate           DateTime
+  endDate             DateTime
+  renewalDate         DateTime?
+
+  // Parties
+  grantorId           String
+  grantor             User            @relation("Grantor", fields: [grantorId], references: [id])
+  granteeId           String
+  grantee             User            @relation("Grantee", fields: [granteeId], references: [id])
+  notaryName          String?
+  notaryNumber        String?
+  notaryDate          DateTime?
+
+  // Asset Reference (polymorphic)
+  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  assetId             String
+
+  // Permissions
+  permissions         Json?
+  restrictions        Json?
+  canManageContracts  Boolean         @default(false)
+  canSignDocuments    Boolean         @default(false)
+  canHandlePayments   Boolean         @default(false)
+  canManageMaintenance Boolean       @default(false)
+
+  // Documentation
+  documentUrl         String?
+  digitalSignature    String?
+  signatureDate       DateTime?
+  witnessName         String?
+  witnessContact      String?
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  isActive            Boolean         @default(true)
+  deletedAt           DateTime?
+
+  @@index([status])
+  @@index([grantorId])
+  @@index([granteeId])
+  @@index([assetType, assetId])
+  @@index([startDate, endDate])
+}
+
+model Maintenance {
+  id                  String          @id @default(uuid())
+  ticketNumber        String          @unique
+  title               String
+  description         String
+  category            String
+  priority            MaintenancePriority @default(MEDIUM)
+  status              MaintenanceStatus @default(REPORTED)
+
+  // Asset Reference
+  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  assetId             String
+  assetName           String?
+
+  // Location
+  location            String?
+  floorNumber         String?
+  unitNumber          String?
+
+  // Timeline
+  reportedDate        DateTime        @default(now())
+  approvedDate        DateTime?
+  scheduledDate       DateTime?
+  startDate           DateTime?
+  completionDate      DateTime?
+  estimatedDuration   String?
+
+  // Costs
+  estimatedCost       Float?
+  actualCost          Float?
+  laborCost           Float?
+  materialCost        Float?
+
+  // Personnel
+  reportedById        String
+  reportedBy          User            @relation(fields: [reportedById], references: [id])
+  assignedToId        String?
+  assignedTo          User?           @relation(fields: [assignedToId], references: [id])
+  contractor          String?
+  contractorContact   String?
+
+  // Documentation
+  images              String[]
+  documents           Document[]
+  notes               Json?
+  resolution          String?
+  warrantyPeriod      String?
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  deletedAt           DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([assetType, assetId])
+  @@index([reportedById])
+  @@index([assignedToId])
+}
+
+model Document {
+  id                  String          @id @default(uuid())
+  documentNumber      String          @unique
+  title               String
+  description         String?
+  type                DocumentType
+  status              String          @default("ACTIVE") // DRAFT, ACTIVE, EXPIRED, ARCHIVED
+
+  // Reference (polymorphic)
+  referenceType       String          // CONTRACT, PROPERTY, VEHICLE, USER, MAINTENANCE, POA
+  referenceId         String
+
+  // File Info
+  fileUrl             String
+  fileSize            Int?
+  fileType            String?
+  fileHash            String?
+
+  // Versioning
+  version             Int             @default(1)
+  previousVersionId   String?
+
+  // Metadata
+  metadata            Json?
+  tags                String[]
+
+  // Signatures
+  signedBy            Json?
+  signatureDate       DateTime?
+  digitalSignature    String?
+
+  // Access Control
+  isPublic            Boolean         @default(false)
+  allowedRoles        UserRole[]      @default([SYSTEM_ADMIN, PROPERTY_MANAGER])
+
+  // Audit
+  uploadedById        String
+  uploadedBy          User            @relation(fields: [uploadedById], references: [id])
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  expiresAt           DateTime?
+  deletedAt           DateTime?
+
+  @@index([type])
+  @@index([referenceType, referenceId])
+  @@index([status])
+}
+
+model Notification {
+  id                  String          @id @default(uuid())
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  title               String
+  message             String
+  type                NotificationType
+  priority            String          @default("MEDIUM") // LOW, MEDIUM, HIGH
+  read                Boolean         @default(false)
+  readAt              DateTime?
+  actionLink          String?
+  actionLabel         String?
+  actionData          Json?
+  scheduledAt         DateTime?
+  sentAt              DateTime?
+  expiresAt           DateTime?
+  viaEmail            Boolean         @default(false)
+  viaSMS              Boolean         @default(false)
+  viaPush             Boolean         @default(true)
+  emailSentAt         DateTime?
+  smsSentAt           DateTime?
+  pushSentAt          DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([read])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model AuditLog {
+  id                  String          @id @default(uuid())
+  userId              String?
+  user                User?           @relation(fields: [userId], references: [id])
+  action              String
+  entityType          String
+  entityId            String
+  changes             Json
+  ipAddress           String?
+  userAgent           String?
+  metadata            Json?
+  sessionId           String?
+  requestId           String?
+  createdAt           DateTime        @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+}
+
+model ContractReview {
+  id                  String          @id @default(uuid())
+  contractId          String
+  contract            Contract        @relation(fields: [contractId], references: [id])
+  reviewerId          String
+  reviewer            User            @relation(fields: [reviewerId], references: [id])
+  status              String          @default("PENDING") // PENDING, APPROVED, REJECTED, NEEDS_REVISION
+  comments            String?
+  reviewedAt          DateTime?
+  version             Int
+  changes             Json?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([contractId])
+  @@index([reviewerId])
+  @@index([status])
+}
+
+model Subscription {
+  id                  String          @id @default(uuid())
+  userId              String
+  user                User            @relation(fields: [userId], references: [id])
+  plan                String          // BASIC, PROFESSIONAL, ENTERPRISE
+  status              String          @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED, PENDING
+  amount              Float
+  currency            String          @default("SAR")
+  billingCycle        String          // MONTHLY, ANNUALY
+  startDate           DateTime
+  endDate             DateTime
+  cancelledAt         DateTime?
+  features            Json?
+  maxProperties       Int?
+  maxVehicles         Int?
+  maxUsers            Int?
+  paymentMethod       String?
+  paymentId           String?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([status])
+}
+
+model PropertyImage {
+  id                  String          @id @default(uuid())
+  propertyId          String
+  property            Property        @relation(fields: [propertyId], references: [id])
+  imageUrl            String
+  caption             String?
+  isPrimary           Boolean         @default(false)
+  order               Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model VehicleImage {
+  id                  String          @id @default(uuid())
+  vehicleId           String
+  vehicle             Vehicle         @relation(fields: [vehicleId], references: [id])
+  imageUrl            String
+  caption             String?
+  isPrimary           Boolean         @default(false)
+  order               Int             @default(0)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
+
+model Inspection {
+  id                  String          @id @default(uuid())
+  propertyId          String
+  property            Property        @relation(fields: [propertyId], references: [id])
+  inspectorId         String
+  inspector           User            @relation(fields: [inspectorId], references: [id])
+  inspectionDate      DateTime
+  type                String          // INITIAL, ROUTINE, EXIT, MAINTENANCE
+  status              String          @default("SCHEDULED")
+  condition           String?
+  findings            Json?
+  photos              String[]
+  notes               String?
+  recommendations     String?
+  signedOffBy         String?
+  signedOffAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@index([propertyId])
+  @@index([inspectorId])
+  @@index([status])
+}
