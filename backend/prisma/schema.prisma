@@ -4,7 +4,6 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("postgresql://pms_user:12345678@localhost:5432/Property_Management_System")
 }
 
 generator client {
@@ -180,7 +179,8 @@ model User {
   payments           Payment[]
   poaAsGrantor       PowerOfAttorney[] @relation("Grantor")
   poaAsGrantee       PowerOfAttorney[] @relation("Grantee")
-  maintenanceRequests Maintenance[]
+  maintenanceRequests Maintenance[]    @relation("MaintenanceReportedBy")
+  maintenanceAssigned Maintenance[]    @relation("MaintenanceAssignedTo")
   notifications      Notification[]
   documents          Document[]
   auditLogs          AuditLog[]
@@ -545,9 +545,9 @@ model Maintenance {
 
   // Personnel
   reportedById        String
-  reportedBy          User            @relation(fields: [reportedById], references: [id])
+  reportedBy          User            @relation("MaintenanceReportedBy", fields: [reportedById], references: [id])
   assignedToId        String?
-  assignedTo          User?           @relation(fields: [assignedToId], references: [id])
+  assignedTo          User?           @relation("MaintenanceAssignedTo", fields: [assignedToId], references: [id])
   contractor          String?
   contractorContact   String?
 
@@ -753,7 +753,7 @@ model Inspection {
   photos              String[]
   notes               String?
   recommendations     String?
-  signedOffByString?
+  signedOffBy         String?
   signedOffAt         DateTime?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
