@@ -2,6 +2,8 @@
  * Number and currency formatting helpers.
  */
 
+import { differenceInMonths } from "./dateHelpers.js";
+
 /**
  * Format a number as currency (SAR by default).
  * @param {number} amount - The amount.
