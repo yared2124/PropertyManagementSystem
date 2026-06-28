@@ -7,13 +7,14 @@
 import multer from "multer";
 import path from "path";
 import { fileURLToPath } from "url";
-import { v4 as uuidv4 } from "uuid"; // <-- Added missing import
+import { v4 as uuidv4 } from "uuid";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Storage configuration
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    // Determine destination folder based on the request path
     let folder = "uploads/";
     if (req.path.includes("property")) folder += "properties/";
     else if (req.path.includes("vehicle")) folder += "vehicles/";
@@ -24,6 +25,7 @@ const storage = multer.diskStorage({
     cb(null, folder);
   },
   filename: (req, file, cb) => {
+    // Generate unique filename: UUID + original extension
     const ext = path.extname(file.originalname);
     cb(null, `${uuidv4()}${ext}`);
   },
@@ -43,6 +45,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Create multer instance with limits
 export const upload = multer({
   storage,
   fileFilter,
