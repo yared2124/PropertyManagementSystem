@@ -4,7 +4,7 @@
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("postgresql://pms_user:12345678@localhost:5432/Property_Management_System")
 }
 
 generator client {
@@ -753,7 +753,7 @@ model Inspection {
   photos              String[]
   notes               String?
   recommendations     String?
-  signedOffBy         String?
+  signedOffByString?
   signedOffAt         DateTime?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
