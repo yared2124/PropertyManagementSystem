@@ -10,10 +10,8 @@ import contractRepository from "../repositories/contract.repository.js";
 import propertyRepository from "../repositories/property.repository.js";
 import vehicleRepository from "../repositories/vehicle.repository.js";
 import { AppError } from "../middlewares/errorHandler.js";
-import {
-  generateContractNumber,
-  calculateTotal,
-} from "../utils/dateHelpers.js";
+import { generateContractNumber } from "../utils/dateHelpers.js";
+import { calculateTotal } from "../utils/numberHelpers.js";
 
 class ContractService {
   /**
