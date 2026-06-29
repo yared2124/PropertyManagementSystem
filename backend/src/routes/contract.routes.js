@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import { validate } from "../middlewares/validation.js";
 import { contractSchema } from "../validations/contract.validation.js";
 import contractController from "../controllers/contract.controller.js";

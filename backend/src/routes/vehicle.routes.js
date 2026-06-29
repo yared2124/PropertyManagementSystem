@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import { validate } from "../middlewares/validation.js";
 import { vehicleSchema } from "../validations/vehicle.validation.js";
 import vehicleController from "../controllers/vehicle.controller.js";

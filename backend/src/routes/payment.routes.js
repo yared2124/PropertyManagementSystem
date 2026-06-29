@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import { validate } from "../middlewares/validation.js";
 import { paymentSchema } from "../validations/payment.validation.js";
 import paymentController from "../controllers/payment.controller.js";

@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate} from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import reportController from "../controllers/report.controller.js";
 
 const router = express.Router();
