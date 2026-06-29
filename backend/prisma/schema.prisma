@@ -161,14 +161,7 @@ model User {
   lastLogin          DateTime?
   refreshToken       String?
 
-  // Audit
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
-  createdBy          String?
-  isActive           Boolean         @default(true)
-  deletedAt          DateTime?
-
-  // Relations
+  // Relations – direct foreign keys
   propertiesOwned    Property[]      @relation("PropertyOwner")
   propertiesManaged  Property[]      @relation("PropertyManager")
   vehiclesOwned      Vehicle[]       @relation("VehicleOwner")
@@ -176,17 +169,26 @@ model User {
   contractsAsTenant  Contract[]      @relation("TenantContracts")
   contractsAsLandlord Contract[]     @relation("LandlordContracts")
   contractsAsManager  Contract[]     @relation("ManagerContracts")
-  payments           Payment[]
   poaAsGrantor       PowerOfAttorney[] @relation("Grantor")
   poaAsGrantee       PowerOfAttorney[] @relation("Grantee")
-  maintenanceRequests Maintenance[]    @relation("MaintenanceReportedBy")
-  maintenanceAssigned Maintenance[]    @relation("MaintenanceAssignedTo")
+
+  // Two distinct relations to Maintenance (reporter and assignee)
+  reportedMaintenance Maintenance[] @relation("MaintenanceReporter")
+  assignedMaintenance Maintenance[] @relation("MaintenanceAssignee")
+
   notifications      Notification[]
-  documents          Document[]
+  documents          Document[]      // uploadedBy relation
   auditLogs          AuditLog[]
   contractReviews    ContractReview[]
   subscriptions      Subscription[]
-  inspections        Inspection[]
+  inspections        Inspection[]    // inspector relation
+
+  // Audit
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  createdBy           String?
+  isActive            Boolean         @default(true)
+  deletedAt           DateTime?
 
   @@index([email])
   @@index([role])
@@ -240,17 +242,15 @@ model Property {
   zoningCode          String?
   insurancePolicy     String?
 
-  // Relations
+  // Direct relations (foreign keys)
   ownerId             String
   owner               User            @relation("PropertyOwner", fields: [ownerId], references: [id])
   managerId           String?
   manager             User?           @relation("PropertyManager", fields: [managerId], references: [id])
-  contracts           Contract[]
-  maintenanceRequests Maintenance[]
-  inspections         Inspection[]
-  documents           Document[]
-  powerOfAttorneys    PowerOfAttorney[]
+
+  // Relations
   images              PropertyImage[]
+  inspections         Inspection[]    // ✅ FIX: added missing opposite relation
 
   // Audit
   createdAt           DateTime        @default(now())
@@ -302,15 +302,13 @@ model Vehicle {
   lastServiceDate     DateTime?
   nextServiceDate     DateTime?
 
-  // Relations
+  // Direct relations
   ownerId             String
   owner               User            @relation("VehicleOwner", fields: [ownerId], references: [id])
   managerId           String?
   manager             User?           @relation("VehicleManager", fields: [managerId], references: [id])
-  contracts           Contract[]
-  maintenanceRequests Maintenance[]
-  documents           Document[]
-  powerOfAttorneys    PowerOfAttorney[]
+
+  // Relations
   images              VehicleImage[]
 
   // Audit
@@ -352,11 +350,11 @@ model Contract {
   firstPaymentDate    DateTime?
   lastPaymentDate     DateTime?
 
-  // Asset Reference (polymorphic)
-  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  // Asset Reference (polymorphic) – stored as strings
+  assetType           String
   assetId             String
 
-  // Parties
+  // Direct relations (foreign keys)
   tenantId            String
   tenant              User            @relation("TenantContracts", fields: [tenantId], references: [id])
   landlordId          String
@@ -377,7 +375,6 @@ model Contract {
   // Relations
   payments            Payment[]
   contractReviews     ContractReview[]
-  documents           Document[]
 
   // Audit
   createdAt           DateTime        @default(now())
@@ -468,7 +465,7 @@ model PowerOfAttorney {
   endDate             DateTime
   renewalDate         DateTime?
 
-  // Parties
+  // Direct relations
   grantorId           String
   grantor             User            @relation("Grantor", fields: [grantorId], references: [id])
   granteeId           String
@@ -478,7 +475,7 @@ model PowerOfAttorney {
   notaryDate          DateTime?
 
   // Asset Reference (polymorphic)
-  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  assetType           String
   assetId             String
 
   // Permissions
@@ -519,8 +516,8 @@ model Maintenance {
   priority            MaintenancePriority @default(MEDIUM)
   status              MaintenanceStatus @default(REPORTED)
 
-  // Asset Reference
-  assetType           String          // "PROPERTY", "VEHICLE", "LAND"
+  // Asset Reference (polymorphic)
+  assetType           String
   assetId             String
   assetName           String?
 
@@ -543,17 +540,17 @@ model Maintenance {
   laborCost           Float?
   materialCost        Float?
 
-  // Personnel
+  // Direct relations – with explicit names
   reportedById        String
-  reportedBy          User            @relation("MaintenanceReportedBy", fields: [reportedById], references: [id])
+  reportedBy          User            @relation("MaintenanceReporter", fields: [reportedById], references: [id])
   assignedToId        String?
-  assignedTo          User?           @relation("MaintenanceAssignedTo", fields: [assignedToId], references: [id])
+  assignedTo          User?           @relation("MaintenanceAssignee", fields: [assignedToId], references: [id])
+
   contractor          String?
   contractorContact   String?
 
   // Documentation
   images              String[]
-  documents           Document[]
   notes               Json?
   resolution          String?
   warrantyPeriod      String?
@@ -577,10 +574,10 @@ model Document {
   title               String
   description         String?
   type                DocumentType
-  status              String          @default("ACTIVE") // DRAFT, ACTIVE, EXPIRED, ARCHIVED
+  status              String          @default("ACTIVE")
 
-  // Reference (polymorphic)
-  referenceType       String          // CONTRACT, PROPERTY, VEHICLE, USER, MAINTENANCE, POA
+  // Polymorphic reference
+  referenceType       String
   referenceId         String
 
   // File Info
@@ -606,9 +603,11 @@ model Document {
   isPublic            Boolean         @default(false)
   allowedRoles        UserRole[]      @default([SYSTEM_ADMIN, PROPERTY_MANAGER])
 
-  // Audit
+  // Direct relation
   uploadedById        String
   uploadedBy          User            @relation(fields: [uploadedById], references: [id])
+
+  // Audit
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
   expiresAt           DateTime?
@@ -626,7 +625,7 @@ model Notification {
   title               String
   message             String
   type                NotificationType
-  priority            String          @default("MEDIUM") // LOW, MEDIUM, HIGH
+  priority            String          @default("MEDIUM")
   read                Boolean         @default(false)
   readAt              DateTime?
   actionLink          String?
@@ -677,7 +676,7 @@ model ContractReview {
   contract            Contract        @relation(fields: [contractId], references: [id])
   reviewerId          String
   reviewer            User            @relation(fields: [reviewerId], references: [id])
-  status              String          @default("PENDING") // PENDING, APPROVED, REJECTED, NEEDS_REVISION
+  status              String          @default("PENDING")
   comments            String?
   reviewedAt          DateTime?
   version             Int
@@ -694,11 +693,11 @@ model Subscription {
   id                  String          @id @default(uuid())
   userId              String
   user                User            @relation(fields: [userId], references: [id])
-  plan                String          // BASIC, PROFESSIONAL, ENTERPRISE
-  status              String          @default("ACTIVE") // ACTIVE, CANCELLED, EXPIRED, PENDING
+  plan                String
+  status              String          @default("ACTIVE")
   amount              Float
   currency            String          @default("SAR")
-  billingCycle        String          // MONTHLY, ANNUALY
+  billingCycle        String
   startDate           DateTime
   endDate             DateTime
   cancelledAt         DateTime?
@@ -746,7 +745,7 @@ model Inspection {
   inspectorId         String
   inspector           User            @relation(fields: [inspectorId], references: [id])
   inspectionDate      DateTime
-  type                String          // INITIAL, ROUTINE, EXIT, MAINTENANCE
+  type                String
   status              String          @default("SCHEDULED")
   condition           String?
   findings            Json?
