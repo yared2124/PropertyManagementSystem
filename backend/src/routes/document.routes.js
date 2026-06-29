@@ -1,5 +1,6 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import { uploadSingle } from "../middlewares/upload.js";
 import documentController from "../controllers/document.controller.js";
 

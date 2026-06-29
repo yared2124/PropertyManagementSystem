@@ -1,12 +1,12 @@
 import express from "express";
-import { authenticate, requireRole } from "../middlewares/auth.js";
+import { authenticate } from "../middlewares/auth.js";
+import { requireRole } from "../middlewares/rbac.js";
 import { validate } from "../middlewares/validation.js";
 import { propertySchema } from "../validations/property.validation.js";
 import propertyController from "../controllers/property.controller.js";
 
 const router = express.Router();
 
-// All property routes require authentication
 router.use(authenticate);
 
 router.post(
