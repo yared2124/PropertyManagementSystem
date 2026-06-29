@@ -4,10 +4,10 @@ import { validate } from "../middlewares/validation.js";
 import {
   updateProfileSchema,
   changePasswordSchema,
-  userIdParamSchema,
-  userFilterSchema,
   createUserSchema,
   updateUserSchema,
+  userIdParamSchema,
+  userFilterSchema,
 } from "../validations/user.validation.js";
 import userController from "../controllers/user.controller.js";
 
@@ -16,7 +16,7 @@ const router = express.Router();
 // All routes require authentication
 router.use(authenticate);
 
-// User profile routes (self)
+// ===== Self-service routes =====
 router.get("/profile", userController.getProfile);
 router.put(
   "/profile",
@@ -29,8 +29,9 @@ router.post(
   userController.changePassword,
 );
 
-// Admin routes
+// ===== Admin routes (require SYSTEM_ADMIN role) =====
 router.use(requireRole(["SYSTEM_ADMIN"]));
+
 router.get("/", validate(userFilterSchema, "query"), userController.list);
 router.get(
   "/:id",
