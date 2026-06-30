@@ -4,6 +4,7 @@
  * Uses the app instance from app.js.
  */
 
+import "dotenv/config";
 import app from "./app.js";
 
 const PORT = process.env.PORT || 5000;
