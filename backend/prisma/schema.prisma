@@ -4,6 +4,7 @@
 
 datasource db {
   provider = "postgresql"
+  // url and shadowDatabaseUrl are now in prisma.config.ts
 }
 
 generator client {
@@ -250,7 +251,7 @@ model Property {
 
   // Relations
   images              PropertyImage[]
-  inspections         Inspection[]    // ✅ FIX: added missing opposite relation
+  inspections         Inspection[]
 
   // Audit
   createdAt           DateTime        @default(now())
