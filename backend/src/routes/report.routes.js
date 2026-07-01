@@ -20,4 +20,10 @@ router.get(
   requireRole(["SYSTEM_ADMIN", "ACCOUNTANT"]),
   reportController.getProfitLoss,
 );
+router.get(
+  "/occupancy-analytics",
+  authenticate,
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
+  reportController.getOccupancyAnalytics,
+);
 export default router;
