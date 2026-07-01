@@ -1,9 +1,4 @@
-/**
- * Report Service – generates analytical reports from the database.
- * Uses Prisma's aggregation and grouping features.
- * All methods return structured data for frontend charts and tables.
- */
-
+// src/services/report.service.js
 import prisma from "../config/database.js";
 import { AppError } from "../middlewares/errorHandler.js";
 
@@ -24,7 +19,6 @@ class ReportService {
       throw new AppError("Start date must be before end date", 400);
     }
 
-    // Convert to Date objects
     const start = new Date(startDate);
     const end = new Date(endDate);
 
@@ -53,21 +47,18 @@ class ReportService {
       _count: true,
     });
 
-    // 3. Revenue by month (or day)
+    // 3. Revenue by month (or day) – using raw SQL with correct table/column names
     let byPeriod = [];
     if (groupBy === "month") {
-      // SQL: GROUP BY DATE_TRUNC('month', payment_date)
-      // Prisma doesn't have direct date truncation, so we use raw query or post-processing
-      // We'll use raw SQL for efficiency
       const queryResult = await prisma.$queryRaw`
-        SELECT 
-          DATE_TRUNC('month', payment_date) as period,
+        SELECT
+          DATE_TRUNC('month', "paymentDate") as period,
           SUM(amount) as total_amount,
           COUNT(*) as payment_count
-        FROM payments
-        WHERE payment_date BETWEEN ${start} AND ${end}
+        FROM "Payment"
+        WHERE "paymentDate" BETWEEN ${start} AND ${end}
           AND status IN ('PAID', 'PARTIALLY_PAID')
-        GROUP BY DATE_TRUNC('month', payment_date)
+        GROUP BY DATE_TRUNC('month', "paymentDate")
         ORDER BY period ASC
       `;
       byPeriod = queryResult.map((row) => ({
@@ -76,16 +67,16 @@ class ReportService {
         count: Number(row.payment_count),
       }));
     } else {
-      // Group by day (less common)
+      // Group by day
       const queryResult = await prisma.$queryRaw`
-        SELECT 
-          DATE(payment_date) as period,
+        SELECT
+          DATE("paymentDate") as period,
           SUM(amount) as total_amount,
           COUNT(*) as payment_count
-        FROM payments
-        WHERE payment_date BETWEEN ${start} AND ${end}
+        FROM "Payment"
+        WHERE "paymentDate" BETWEEN ${start} AND ${end}
           AND status IN ('PAID', 'PARTIALLY_PAID')
-        GROUP BY DATE(payment_date)
+        GROUP BY DATE("paymentDate")
         ORDER BY period ASC
       `;
       byPeriod = queryResult.map((row) => ({
@@ -205,15 +196,14 @@ class ReportService {
     });
 
     // 3. Average resolution time (for completed requests)
-    // We need to compute average (completion_date - reported_date) for completed ones
-    // Using raw SQL for date difference
+    // Using raw SQL with correct table "Maintenance" and camelCase columns
     const avgResolutionRaw = await prisma.$queryRaw`
-      SELECT 
-        AVG(EXTRACT(EPOCH FROM (completion_date - reported_date)) / 86400) as avg_days
-      FROM maintenance_requests
+      SELECT
+        AVG(EXTRACT(EPOCH FROM ("completionDate" - "reportedDate")) / 86400) as avg_days
+      FROM "Maintenance"
       WHERE status = 'COMPLETED'
-        AND completion_date IS NOT NULL
-        AND reported_date IS NOT NULL
+        AND "completionDate" IS NOT NULL
+        AND "reportedDate" IS NOT NULL
     `;
     const avgResolutionDays =
       avgResolutionRaw.length > 0
@@ -272,13 +262,13 @@ class ReportService {
 
     // 3. Average rent and market value by city
     const cityStats = await prisma.$queryRaw`
-      SELECT 
+      SELECT
         city,
-        AVG(rental_rate) as avg_rent,
-        AVG(market_value) as avg_value,
+        AVG("rentalRate") as avg_rent,
+        AVG("marketValue") as avg_value,
         COUNT(*) as count
-      FROM properties
-      WHERE deleted_at IS NULL
+      FROM "Property"
+      WHERE "deletedAt" IS NULL
       GROUP BY city
     `;
 
@@ -329,8 +319,7 @@ class ReportService {
       },
     });
 
-    // Active users (logged in recently – last 30 days) – if you track lastLogin
-    // We'll just count users with lastLogin within 30 days (if field exists)
+    // Active users (logged in recently – last 30 days)
     const activeUsers = await prisma.user.count({
       where: {
         lastLogin: { gte: thirtyDaysAgo },
