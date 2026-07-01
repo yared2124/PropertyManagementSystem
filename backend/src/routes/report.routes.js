@@ -14,5 +14,10 @@ router.get("/maintenance", reportController.getMaintenance);
 router.get("/occupancy", reportController.getOccupancy);
 router.get("/users", reportController.getUsers);
 router.get("/dashboard-summary", reportController.getDashboardSummary);
-
+router.get(
+  "/profit-loss",
+  authenticate,
+  requireRole(["SYSTEM_ADMIN", "ACCOUNTANT"]),
+  reportController.getProfitLoss,
+);
 export default router;
