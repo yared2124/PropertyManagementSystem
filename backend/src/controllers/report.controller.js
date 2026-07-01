@@ -72,6 +72,15 @@ class ReportController {
       next(error);
     }
   }
+
+  async getOccupancyAnalytics(req, res, next) {
+    try {
+      const data = await reportService.getOccupancyAnalytics();
+      res.status(200).json(successResponse(data));
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ReportController();
