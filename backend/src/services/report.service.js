@@ -340,6 +340,34 @@ class ReportService {
     };
   }
 
+  async getProfitLoss(startDate, endDate) {
+    // Revenue: all PAID payments in period
+    const revenue = await prisma.payment.aggregate({
+      where: {
+        paymentDate: { gte: new Date(startDate), lte: new Date(endDate) },
+        status: "PAID",
+      },
+      _sum: { amount: true },
+    });
+
+    // Expenses: actual cost of completed maintenance
+    const expenses = await prisma.maintenance.aggregate({
+      where: {
+        completionDate: { gte: new Date(startDate), lte: new Date(endDate) },
+        status: "COMPLETED",
+      },
+      _sum: { actualCost: true },
+    });
+
+    // Additional expenses could come from other tables (e.g., property taxes)
+    return {
+      period: { startDate, endDate },
+      revenue: Number(revenue._sum.amount || 0),
+      expenses: Number(expenses._sum.actualCost || 0),
+      netIncome: (revenue._sum.amount || 0) - (expenses._sum.actualCost || 0),
+    };
+  }
+
   /**
    * Get dashboard summary (combined quick stats).
    * Used for the main dashboard.
