@@ -14,6 +14,7 @@ import documentRoutes from "./document.routes.js";
 import notificationRoutes from "./notification.routes.js";
 import dashboardRoutes from "./dashboard.routes.js";
 import reportRoutes from "./report.routes.js";
+import userRoutes from "./user.routes.js";
 
 const router = express.Router();
 
@@ -28,5 +29,6 @@ router.use("/documents", documentRoutes);
 router.use("/notifications", notificationRoutes);
 router.use("/dashboard", dashboardRoutes);
 router.use("/reports", reportRoutes);
+router.use("/users", userRoutes);
 
 export default router;
