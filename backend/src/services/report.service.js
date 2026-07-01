@@ -409,6 +409,45 @@ class ReportService {
       totalContracts,
     };
   }
+
+  async getOccupancyAnalytics() {
+    const total = await prisma.property.count({ where: { deletedAt: null } });
+    const rented = await prisma.property.count({ where: { status: "RENTED" } });
+    const available = await prisma.property.count({
+      where: { status: "AVAILABLE" },
+    });
+    const maintenance = await prisma.property.count({
+      where: { status: "UNDER_MAINTENANCE" },
+    });
+
+    // Rent collection rate: total paid / total due (sum of monthlyRent for active contracts)
+    const totalDue = await prisma.contract.aggregate({
+      where: { status: "ACTIVE" },
+      _sum: { monthlyRent: true },
+    });
+    const totalPaid = await prisma.payment.aggregate({
+      where: { status: "PAID" },
+      _sum: { amount: true },
+    });
+
+    const due = Number(totalDue._sum.monthlyRent || 0);
+    const paid = Number(totalPaid._sum.amount || 0);
+
+    return {
+      occupancy: {
+        total,
+        rented,
+        available,
+        underMaintenance: maintenance,
+        occupancyRate: total ? (rented / total) * 100 : 0,
+      },
+      rentCollection: {
+        totalDue: due,
+        totalPaid: paid,
+        collectionRate: due ? (paid / due) * 100 : 0,
+      },
+    };
+  }
 }
 
 export default new ReportService();
