@@ -1,7 +1,3 @@
-/**
- * Property controller – CRUD endpoints for properties.
- */
-
 import propertyService from "../services/property.service.js";
 import { successResponse } from "../utils/apiResponse.js";
 
@@ -46,6 +42,27 @@ class PropertyController {
     try {
       await propertyService.delete(req.params.id);
       res.status(204).send();
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Upload an image for a property.
+   * Creates a record in PropertyImage table.
+   */
+  async uploadImage(req, res, next) {
+    try {
+      const propertyId = req.params.id;
+      const file = req.file;
+
+      if (!file) {
+        throw new AppError("No file uploaded", 400);
+      }
+
+      // Delegate to a service method (you may need to create this in property.service.js)
+      const image = await propertyService.addImage(propertyId, file);
+      res.status(201).json(successResponse(image, "Image uploaded", 201));
     } catch (error) {
       next(error);
     }
