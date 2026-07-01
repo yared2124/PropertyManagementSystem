@@ -2,6 +2,7 @@
  * Multer configuration for file uploads.
  * Defines storage location, file naming, file type validation,
  * and automatically creates destination directories.
+ * Updated to correctly detect route using baseUrl + path.
  */
 
 import multer from "multer";
@@ -32,26 +33,34 @@ const ensureDirectoryExists = (dir) => {
 
 const storage = multer.diskStorage({
   /**
-   * Determine the destination folder based on the request path.
+   * Determine the destination folder based on the full request path.
+   * Uses req.baseUrl + req.path to capture the entire route.
    * @param {Object} req - Express request object.
    * @param {Object} file - Multer file object.
    * @param {Function} cb - Callback function.
    */
   destination: (req, file, cb) => {
+    // Build full path from baseUrl and route path
+    const fullPath = (req.baseUrl + req.path).toLowerCase();
+    // Optional debug: console.log('📁 Full upload path:', fullPath);
+
     let folder = "uploads/";
 
-    // Route-based folder selection
-    if (req.path.includes("property")) {
+    // Check for specific route segments
+    if (fullPath.includes("properties") || fullPath.includes("property")) {
       folder += "properties/";
-    } else if (req.path.includes("vehicle")) {
+    } else if (fullPath.includes("vehicles") || fullPath.includes("vehicle")) {
       folder += "vehicles/";
-    } else if (req.path.includes("contract")) {
+    } else if (
+      fullPath.includes("contracts") ||
+      fullPath.includes("contract")
+    ) {
       folder += "contracts/";
-    } else if (req.path.includes("poa")) {
+    } else if (fullPath.includes("poa") || fullPath.includes("power")) {
       folder += "poa/";
-    } else if (req.path.includes("profile")) {
+    } else if (fullPath.includes("profile")) {
       folder += "profiles/";
-    } else if (req.path.includes("invoice")) {
+    } else if (fullPath.includes("invoice")) {
       folder += "invoices/";
     } else {
       folder += "misc/";
@@ -114,18 +123,24 @@ export const upload = multer({
 
 /**
  * Middleware for single file upload (field name: "file").
+ * @param {string} fieldName - Name of the file field in the form-data.
+ * @returns {Function} Multer middleware.
  */
 export const uploadSingle = (fieldName = "file") => upload.single(fieldName);
 
 /**
  * Middleware for multiple file uploads (field name: "files").
+ * @param {string} fieldName - Name of the file field in the form-data.
  * @param {number} maxCount - Maximum number of files.
+ * @returns {Function} Multer middleware.
  */
 export const uploadMultiple = (fieldName = "files", maxCount = 5) =>
   upload.array(fieldName, maxCount);
 
 /**
  * Middleware for multiple fields (e.g., images, documents).
+ * @param {Array} fields - Array of { name, maxCount } objects.
+ * @returns {Function} Multer middleware.
  */
 export const uploadFields = (fields) => upload.fields(fields);
 
