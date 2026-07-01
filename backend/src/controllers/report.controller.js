@@ -60,6 +60,18 @@ class ReportController {
       next(error);
     }
   }
+  async getProfitLoss(req, res, next) {
+    try {
+      const { startDate, endDate } = req.query;
+      if (!startDate || !endDate) {
+        throw new AppError("startDate and endDate are required", 400);
+      }
+      const data = await reportService.getProfitLoss(startDate, endDate);
+      res.status(200).json(successResponse(data));
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export default new ReportController();
