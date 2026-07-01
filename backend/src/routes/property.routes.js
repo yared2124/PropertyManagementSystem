@@ -2,6 +2,7 @@ import express from "express";
 import { authenticate } from "../middlewares/auth.js";
 import { requireRole } from "../middlewares/rbac.js";
 import { validate } from "../middlewares/validation.js";
+import { uploadSingle } from "../middlewares/upload.js"; // <-- import multer middleware
 import { propertySchema } from "../validations/property.validation.js";
 import propertyController from "../controllers/property.controller.js";
 
@@ -23,5 +24,12 @@ router.put(
   propertyController.update,
 );
 router.delete("/:id", requireRole(["SYSTEM_ADMIN"]), propertyController.delete);
+
+// Image upload route – uses multer
+router.post(
+  "/:id/images",
+  uploadSingle("image"),
+  propertyController.uploadImage,
+);
 
 export default router;
