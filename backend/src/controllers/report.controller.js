@@ -1,5 +1,6 @@
 import reportService from "../services/report.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { generateCSV } from "../utils/csvExporter.js";
 
 class ReportController {
   async getRevenue(req, res, next) {
@@ -77,6 +78,35 @@ class ReportController {
     try {
       const data = await reportService.getOccupancyAnalytics();
       res.status(200).json(successResponse(data));
+    } catch (error) {
+      next(error);
+    }
+  }
+  async exportRevenueCSV(req, res, next) {
+    try {
+      const { startDate, endDate } = req.query;
+      const report = await reportService.getRevenueReport(
+        startDate,
+        endDate,
+        "month",
+      );
+      const data = report.byPeriod.map((p) => ({
+        period: new Date(p.period).toLocaleDateString(),
+        amount: p.totalAmount,
+        count: p.count,
+      }));
+      const columns = [
+        { header: "Period", key: "period" },
+        { header: "Amount (SAR)", key: "amount" },
+        { header: "Transactions", key: "count" },
+      ];
+      const csv = await generateCSV(data, columns);
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=revenue_report.csv",
+      );
+      res.send(csv);
     } catch (error) {
       next(error);
     }
