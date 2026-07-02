@@ -15,6 +15,11 @@ router.post(
   validate(paymentSchema),
   paymentController.process,
 );
+router.post(
+  "/create-intent",
+  authenticate,
+  paymentController.createStripeIntent,
+);
 router.get("/", paymentController.findAll);
 router.get("/:id", paymentController.findById);
 router.post(
