@@ -3,7 +3,7 @@
  * Configures middleware, static files, routes, and error handling.
  * Exports the app instance for server.js.
  */
-
+import webhookRoutes from "./routes/webhook.routes.js";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -13,11 +13,17 @@ import { errorHandler } from "./middlewares/errorHandler.js";
 import routes from "./routes/index.js";
 import logger from "./config/logger.js";
 
+
+
+
 const app = express();
 
 // =============================================
 // Security & Performance Middleware
 // =============================================
+
+// Webhooks must come before express.json()
+app.use('/webhook', webhookRoutes);
 app.use(helmet()); // Sets secure HTTP headers
 app.use(cors()); // Enables Cross-Origin Resource Sharing
 app.use(compression()); // Compresses response bodies
