@@ -4,6 +4,7 @@
 
 import paymentService from "../services/payment.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+import { createPaymentIntent } from "../services/stripe.service.js";
 
 class PaymentController {
   async process(req, res, next) {
@@ -19,6 +20,27 @@ class PaymentController {
     try {
       const payments = await paymentService.findAll(req.query);
       res.status(200).json(successResponse(payments));
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async createStripeIntent(req, res, next) {
+    try {
+      const { amount, contractId } = req.body;
+      if (!amount || !contractId) {
+        throw new AppError("Amount and contractId are required", 400);
+      }
+      const intent = await createPaymentIntent(amount, "sar", { contractId });
+      res.status(200).json(
+        successResponse(
+          {
+            clientSecret: intent.client_secret,
+            paymentIntentId: intent.id,
+          },
+          "Payment intent created",
+        ),
+      );
     } catch (error) {
       next(error);
     }
