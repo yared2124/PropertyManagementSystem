@@ -26,4 +26,10 @@ router.get(
   requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   reportController.getOccupancyAnalytics,
 );
+router.get(
+  "/revenue/csv",
+  authenticate,
+  requireRole(["SYSTEM_ADMIN", "ACCOUNTANT"]),
+  reportController.exportRevenueCSV,
+);
 export default router;
