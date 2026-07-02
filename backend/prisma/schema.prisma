@@ -4,7 +4,6 @@
 
 datasource db {
   provider = "postgresql"
-  // url and shadowDatabaseUrl are now in prisma.config.ts
 }
 
 generator client {
@@ -173,12 +172,12 @@ model User {
   poaAsGrantor       PowerOfAttorney[] @relation("Grantor")
   poaAsGrantee       PowerOfAttorney[] @relation("Grantee")
 
-  // Two distinct relations to Maintenance (reporter and assignee)
+  // Two distinct relations to Maintenance
   reportedMaintenance Maintenance[] @relation("MaintenanceReporter")
   assignedMaintenance Maintenance[] @relation("MaintenanceAssignee")
 
   notifications      Notification[]
-  documents          Document[]      // uploadedBy relation
+  documents          Document[]
   auditLogs          AuditLog[]
   contractReviews    ContractReview[]
   subscriptions      Subscription[]
@@ -243,7 +242,7 @@ model Property {
   zoningCode          String?
   insurancePolicy     String?
 
-  // Direct relations (foreign keys)
+  // Direct relations
   ownerId             String
   owner               User            @relation("PropertyOwner", fields: [ownerId], references: [id])
   managerId           String?
@@ -351,11 +350,11 @@ model Contract {
   firstPaymentDate    DateTime?
   lastPaymentDate     DateTime?
 
-  // Asset Reference (polymorphic) – stored as strings
+  // Asset Reference (polymorphic)
   assetType           String
   assetId             String
 
-  // Direct relations (foreign keys)
+  // Direct relations
   tenantId            String
   tenant              User            @relation("TenantContracts", fields: [tenantId], references: [id])
   landlordId          String
@@ -459,7 +458,7 @@ model PowerOfAttorney {
   poaNumber           String          @unique
   title               String
   description         String?
-  scope               String          // FULL, LIMITED, SPECIFIC
+  scope               String
   scopeDetails        Json?
   status              POAStatus       @default(PENDING_APPROVAL)
   startDate           DateTime
@@ -541,7 +540,7 @@ model Maintenance {
   laborCost           Float?
   materialCost        Float?
 
-  // Direct relations – with explicit names
+  // Direct relations
   reportedById        String
   reportedBy          User            @relation("MaintenanceReporter", fields: [reportedById], references: [id])
   assignedToId        String?
@@ -757,6 +756,8 @@ model Inspection {
   signedOffAt         DateTime?
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
+  isActive            Boolean         @default(true)   // ✅ ADDED
+  deletedAt           DateTime?                       // ✅ ADDED
 
   @@index([propertyId])
   @@index([inspectorId])
