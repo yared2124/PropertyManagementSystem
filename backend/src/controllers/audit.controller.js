@@ -4,8 +4,8 @@ import { successResponse } from "../utils/apiResponse.js";
 class AuditController {
   async findAll(req, res, next) {
     try {
-      const logs = await auditService.findAll(req.query);
-      res.status(200).json(successResponse(logs));
+      const result = await auditService.findAll(req.query);
+      res.status(200).json(successResponse(result));
     } catch (error) {
       next(error);
     }
