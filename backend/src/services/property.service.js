@@ -1,26 +1,99 @@
-/**
- * Property service – manages property CRUD operations.
- * Includes image upload functionality.
- */
-
 import prisma from "../config/database.js";
 import propertyRepository from "../repositories/property.repository.js";
+import auditService from "./audit.service.js"; // ✅ import audit service
 import { AppError } from "../middlewares/errorHandler.js";
 
 class PropertyService {
   /**
    * Create a new property.
-   * @param {Object} data - Property data.
-   * @returns {Promise<Object>} Created property.
    */
-  async create(data) {
-    return propertyRepository.create(data);
+  async create(data, userId = null, ipAddress = null, userAgent = null) {
+    const property = await propertyRepository.create(data);
+
+    // ✅ LOG TO AUDIT – GUARANTEED TO RUN
+    try {
+      await auditService.logAction({
+        userId,
+        action: "CREATE_POST_Property",
+        entityType: "Property",
+        entityId: property.id,
+        changes: property,
+        ipAddress,
+        userAgent,
+        metadata: {
+          method: "POST",
+          url: "/api/v1/properties",
+          statusCode: 201,
+        },
+      });
+      console.log("✅ Audit log saved for property:", property.id);
+    } catch (error) {
+      console.error("❌ Audit log failed:", error.message);
+    }
+
+    return property;
+  }
+
+  /**
+   * Update a property.
+   */
+  async update(id, data, userId = null, ipAddress = null, userAgent = null) {
+    await this.findById(id);
+    const property = await propertyRepository.update(id, data);
+
+    try {
+      await auditService.logAction({
+        userId,
+        action: "UPDATE_PUT_Property",
+        entityType: "Property",
+        entityId: property.id,
+        changes: data,
+        ipAddress,
+        userAgent,
+        metadata: {
+          method: "PUT",
+          url: `/api/v1/properties/${id}`,
+          statusCode: 200,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Audit log failed:", error.message);
+    }
+
+    return property;
+  }
+
+  /**
+   * Soft delete a property.
+   */
+  async delete(id, userId = null, ipAddress = null, userAgent = null) {
+    await this.findById(id);
+    const property = await propertyRepository.softDelete(id);
+
+    try {
+      await auditService.logAction({
+        userId,
+        action: "DELETE_DELETE_Property",
+        entityType: "Property",
+        entityId: property.id,
+        changes: { deleted: true },
+        ipAddress,
+        userAgent,
+        metadata: {
+          method: "DELETE",
+          url: `/api/v1/properties/${id}`,
+          statusCode: 204,
+        },
+      });
+    } catch (error) {
+      console.error("❌ Audit log failed:", error.message);
+    }
+
+    return property;
   }
 
   /**
    * Get all properties with optional filters.
-   * @param {Object} filters - Query filters (status, city, etc.).
-   * @returns {Promise<Array>} List of properties.
    */
   async findAll(filters = {}) {
     return propertyRepository.findAll({ ...filters, deletedAt: null });
@@ -28,9 +101,6 @@ class PropertyService {
 
   /**
    * Get a single property by ID.
-   * @param {string} id - Property UUID.
-   * @returns {Promise<Object>} Property object.
-   * @throws {AppError} If property not found or soft‑deleted.
    */
   async findById(id) {
     const property = await propertyRepository.findById(id);
@@ -41,39 +111,11 @@ class PropertyService {
   }
 
   /**
-   * Update a property.
-   * @param {string} id - Property UUID.
-   * @param {Object} data - Fields to update.
-   * @returns {Promise<Object>} Updated property.
-   */
-  async update(id, data) {
-    await this.findById(id); // ensure exists
-    return propertyRepository.update(id, data);
-  }
-
-  /**
-   * Soft‑delete a property.
-   * @param {string} id - Property UUID.
-   * @returns {Promise<Object>} Updated property with deletedAt set.
-   */
-  async delete(id) {
-    await this.findById(id);
-    return propertyRepository.softDelete(id);
-  }
-
-  /**
    * Add an image to a property.
-   * @param {string} propertyId - UUID of the property.
-   * @param {Object} file - Multer file object (contains path, originalname, etc.)
-   * @param {boolean} isPrimary - Whether this image is the primary one.
-   * @param {string} caption - Optional caption.
-   * @returns {Promise<Object>} Created PropertyImage record.
    */
   async addImage(propertyId, file, isPrimary = false, caption = "") {
-    // Ensure the property exists
     await this.findById(propertyId);
 
-    // If this image is primary, set all other images of this property to non‑primary
     if (isPrimary) {
       await prisma.propertyImage.updateMany({
         where: { propertyId },
@@ -81,14 +123,13 @@ class PropertyService {
       });
     }
 
-    // Create the image record
     const image = await prisma.propertyImage.create({
       data: {
         propertyId,
-        imageUrl: file.path, // or file.location if using cloud storage
+        imageUrl: file.path.replace(/\\/g, "/"),
         caption: caption || file.originalname,
         isPrimary,
-        order: 0, // you can implement order logic if needed
+        order: 0,
       },
     });
 
@@ -96,28 +137,7 @@ class PropertyService {
   }
 
   /**
-   * Remove an image from a property.
-   * @param {string} imageId - UUID of the PropertyImage record.
-   * @returns {Promise<Object>} Deleted image record.
-   */
-  async removeImage(imageId) {
-    const image = await prisma.propertyImage.findUnique({
-      where: { id: imageId },
-    });
-    if (!image) {
-      throw new AppError("Image not found", 404);
-    }
-    // Optionally delete the physical file
-    // deleteFile(image.imageUrl);
-    return prisma.propertyImage.delete({
-      where: { id: imageId },
-    });
-  }
-
-  /**
    * Get all images for a property.
-   * @param {string} propertyId - UUID of the property.
-   * @returns {Promise<Array>} List of images.
    */
   async getImages(propertyId) {
     await this.findById(propertyId);
