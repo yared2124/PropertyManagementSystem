@@ -60,5 +60,10 @@ app.get("/health", (req, res) => {
 // Global Error Handler (must be last)
 // =============================================
 app.use(errorHandler);
+app.use((req, res, next) => {
+  // Optionally log all requests; but we want to log only mutations.
+  // Better to apply per-route or per-method.
+  next();
+});
 
 export default app;
