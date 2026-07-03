@@ -16,6 +16,8 @@ import dashboardRoutes from "./dashboard.routes.js";
 import reportRoutes from "./report.routes.js";
 import userRoutes from "./user.routes.js";
 import inspectionRoutes from "./inspection.routes.js";
+import auditRoutes from './audit.routes.js';
+
 const router = express.Router();
 
 router.use("/auth", authRoutes);
@@ -31,5 +33,6 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/reports", reportRoutes);
 router.use("/users", userRoutes);
 router.use("/inspections", inspectionRoutes);
+router.use("/audit-logs", auditRoutes);
 
 export default router;
