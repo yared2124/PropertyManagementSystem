@@ -650,19 +650,21 @@ model Notification {
 }
 
 model AuditLog {
-  id                  String          @id @default(uuid())
-  userId              String?
-  user                User?           @relation(fields: [userId], references: [id])
-  action              String
-  entityType          String
-  entityId            String
-  changes             Json
-  ipAddress           String?
-  userAgent           String?
-  metadata            Json?
-  sessionId           String?
-  requestId           String?
-  createdAt           DateTime        @default(now())
+  id          String    @id @default(uuid())
+  userId      String?
+  user        User?     @relation(fields: [userId], references: [id])
+  action      String
+  entityType  String
+  entityId    String
+  changes     Json
+  ipAddress   String?
+  userAgent   String?
+  metadata    Json?
+  sessionId   String?
+  requestId   String?
+  createdAt   DateTime  @default(now())
+  isActive    Boolean   @default(true)   // ✅ ADD THIS
+  deletedAt   DateTime?                 // ✅ ADD THIS
 
   @@index([userId])
   @@index([entityType, entityId])
