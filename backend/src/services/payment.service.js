@@ -6,6 +6,8 @@
 import paymentRepository from "../repositories/payment.repository.js";
 import contractRepository from "../repositories/contract.repository.js";
 import { AppError } from "../middlewares/errorHandler.js";
+import eventBus from "../events/eventBus.js";
+
 
 class PaymentService {
   /**
@@ -83,6 +85,7 @@ class PaymentService {
     }
     return paymentRepository.update(paymentId, { status: "REFUNDED" });
   }
+  
 }
 
 export default new PaymentService();
