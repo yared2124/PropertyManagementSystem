@@ -12,6 +12,8 @@ import compression from "compression";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import routes from "./routes/index.js";
 import logger from "./config/logger.js";
+import swaggerUi from "swagger-ui-express";
+import { specs } from "./config/swagger.js";
 
 
 
@@ -65,5 +67,6 @@ app.use((req, res, next) => {
   // Better to apply per-route or per-method.
   next();
 });
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 export default app;
