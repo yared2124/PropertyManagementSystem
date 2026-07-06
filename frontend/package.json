@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "property-management-frontend",
   "version": "1.0.0",
   "description": "",
   "main": "postcss.config.js",
@@ -9,7 +9,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
