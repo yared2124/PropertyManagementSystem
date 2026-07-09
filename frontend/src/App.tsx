@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Layout } from "./components/common/Layout";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
@@ -15,7 +15,7 @@ function App() {
           ))}
 
           {/* Protected Routes */}
-          <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute><Outlet/></ProtectedRoute>}>
             <Route element={<Layout />}>
               {protectedRoutes.map((route) => (
                 <Route
