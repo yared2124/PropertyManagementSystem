@@ -3,12 +3,14 @@ import { useAuth } from "../../hooks/useAuth";
 
 interface ProtectedRouteProps {
   children: JSX.Element;
-  requiredRole?: string;
+  requiredRole?: string | string[]; // ✅ Now supports array of roles
+  redirectTo?: string;
 }
 
 export const ProtectedRoute = ({
   children,
   requiredRole,
+  redirectTo = "/dashboard",
 }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
 
@@ -19,11 +21,17 @@ export const ProtectedRoute = ({
       </div>
     );
   }
+
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-  if (requiredRole && user.role !== requiredRole) {
-    return <Navigate to="/dashboard" replace />;
+
+  if (requiredRole) {
+    const roles = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    if (!roles.includes(user.role)) {
+      return <Navigate to={redirectTo} replace />;
+    }
   }
+
   return children;
 };
