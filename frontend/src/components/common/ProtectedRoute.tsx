@@ -1,8 +1,9 @@
-import { Navigate } from "react-router-dom";
+import type { ReactElement } from "react";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 
 interface ProtectedRouteProps {
-  children: JSX.Element;
+  children?: ReactElement;
   requiredRole?: string | string[]; // ✅ Now supports array of roles
   redirectTo?: string;
 }
@@ -33,5 +34,5 @@ export const ProtectedRoute = ({
     }
   }
 
-  return children;
+  return children ?? <Outlet />;
 };
