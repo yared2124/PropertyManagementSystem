@@ -9,6 +9,7 @@ import {
   HomeIcon,
   DocumentTextIcon,
   PhotoIcon,
+  ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import { Property } from "../types";
 import { StatusBadge } from "../components/common/StatusBadge";
@@ -45,6 +46,19 @@ export default function PropertyDetail() {
     } catch (error) {
       console.error("Failed to delete property", error);
     }
+  };
+
+  // Quick action handlers
+  const handleCreateContract = () => {
+    navigate(`/contracts/new?propertyId=${id}`);
+  };
+
+  const handleScheduleInspection = () => {
+    navigate(`/inspections/new?propertyId=${id}`);
+  };
+
+  const handleUploadImages = () => {
+    navigate(`/properties/${id}/edit?tab=images`);
   };
 
   if (loading) {
@@ -143,7 +157,7 @@ export default function PropertyDetail() {
                     : "border-transparent hover:border-gray-300"
                 }`}
                 onClick={() => {
-                  // Swap with primary image for preview
+                  // Optional: set as primary image (can implement later)
                 }}
               />
             ))}
@@ -269,18 +283,24 @@ export default function PropertyDetail() {
               Quick Actions
             </h3>
             <div className="space-y-2">
-              <Link
-                to={`/contracts/new?property=${id}`}
+              <button
+                onClick={handleCreateContract}
                 className="w-full btn-primary flex items-center justify-center space-x-2"
               >
                 <DocumentTextIcon className="w-4 h-4" />
                 <span>Create Contract</span>
-              </Link>
-              <button className="w-full btn-secondary flex items-center justify-center space-x-2">
-                <HomeIcon className="w-4 h-4" />
+              </button>
+              <button
+                onClick={handleScheduleInspection}
+                className="w-full btn-secondary flex items-center justify-center space-x-2"
+              >
+                <ClipboardDocumentCheckIcon className="w-4 h-4" />
                 <span>Schedule Inspection</span>
               </button>
-              <button className="w-full btn-secondary flex items-center justify-center space-x-2">
+              <button
+                onClick={handleUploadImages}
+                className="w-full btn-secondary flex items-center justify-center space-x-2"
+              >
                 <PhotoIcon className="w-4 h-4" />
                 <span>Upload Images</span>
               </button>
