@@ -2,8 +2,8 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Layout } from "./components/common/Layout";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
-
 // ----- Public Pages -----
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
