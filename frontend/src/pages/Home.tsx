@@ -88,7 +88,7 @@ export default function Home() {
                 Smart <br />
                 <span className="text-blue-600">Management</span>
               </h1>
-              <p className="text-xl text-gray-600 mt-4">Property Mana</p>
+              <p className="text-xl text-gray-600 mt-4">Property Management</p>
               <p className="text-gray-500 mt-2 max-w-lg">
                 The all-in-one property management platform for landlords,
                 property managers, and tenants. Streamline your operations with
@@ -110,49 +110,6 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-
-            {/* Right Column - Illustration */}
-            <div className="hidden lg:flex justify-center">
-              <div className="relative w-full max-w-md">
-                <div className="bg-white rounded-2xl shadow-2xl p-6 border border-gray-100">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-2">
-                      <BuildingOffice2Icon className="w-6 h-6 text-blue-600" />
-                      <span className="font-bold text-gray-900">
-                        PROPERTYMANAGER
-                      </span>
-                    </div>
-                    <span className="text-xs text-gray-400">v2.0</span>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                      <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                      <span>5,000+ properties managed</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                      <span>1,200+ active contracts</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                      <span className="w-2 h-2 bg-yellow-500 rounded-full"></span>
-                      <span>98% tenant satisfaction</span>
-                    </div>
-                    <div className="flex items-center space-x-3 text-sm text-gray-600">
-                      <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
-                      <span>SAR 50M+ in transactions</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between">
-                    <span className="text-xs text-gray-400">
-                      Real-time analytics
-                    </span>
-                    <span className="text-xs text-gray-400">
-                      Secure platform
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -162,19 +119,19 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <p className="text-4xl font-bold text-blue-600">500+</p>
+              <p className="text-4xl font-bold text-blue-600">50+</p>
               <p className="text-sm text-gray-500 mt-1">Properties</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-blue-600">200+</p>
+              <p className="text-4xl font-bold text-blue-600">20+</p>
               <p className="text-sm text-gray-500 mt-1">Active Clients</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-blue-600">150+</p>
+              <p className="text-4xl font-bold text-blue-600">15+</p>
               <p className="text-sm text-gray-500 mt-1">Contracts</p>
             </div>
             <div>
-              <p className="text-4xl font-bold text-blue-600">1,000+</p>
+              <p className="text-4xl font-bold text-blue-600">10+</p>
               <p className="text-sm text-gray-500 mt-1">Transactions</p>
             </div>
           </div>
@@ -318,7 +275,7 @@ export default function Home() {
                 The all-in-one property management platform.
               </p>
               <p className="text-sm mt-2">
-                © 2024 PROPERTYMANAGER. All rights reserved.
+                © 2026 PROPERTYMANAGER. All rights reserved.
               </p>
             </div>
             <div>
