@@ -2,8 +2,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Layout } from "./components/common/Layout";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
-// ----- Public Pages -----
 
+// ----- Public Pages -----
+import Home from "./pages/Home"; // ✅ ADD THIS
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 
@@ -37,7 +38,7 @@ import Lands from "./pages/Lands";
 import Rentals from "./pages/Rentals";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
-import AuditLogs from "./pages/AuditLogs"; // if you have this page
+import AuditLogs from "./pages/AuditLogs";
 
 function App() {
   return (
@@ -45,14 +46,14 @@ function App() {
       <AuthProvider>
         <Routes>
           {/* ========== PUBLIC ROUTES ========== */}
+          <Route path="/" element={<Home />} /> {/* ✅ ADD THIS LINE */}
+          <Route path="/home" element={<Home />} /> {/* Optional alias */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
           {/* ========== PROTECTED ROUTES ========== */}
           <Route element={<ProtectedRoute />}>
             <Route element={<Layout />}>
               {/* ----- Accessible by all authenticated users ----- */}
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
               <Route path="/settings" element={<Settings />} />
