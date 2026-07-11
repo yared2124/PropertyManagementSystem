@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 import { DashboardMetrics } from "../types";
 import MetricCard from "../components/dashboard/MetricCard";
 import RevenueChart from "../components/dashboard/RevenueChart";
@@ -10,23 +11,20 @@ import {
   DocumentTextIcon,
   WrenchScrewdriverIcon,
   CreditCardIcon,
-  UserIcon,
-  HomeIcon,
-  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
 
 export default function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
-  const [loading, setLoading] = useState(true);
   const [tenantData, setTenantData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const role = user?.role;
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // For admin/manager/accountant – fetch all metrics
         if (
           ["SYSTEM_ADMIN", "PROPERTY_MANAGER", "ACCOUNTANT"].includes(
             role || "",
@@ -34,9 +32,7 @@ export default function Dashboard() {
         ) {
           const { data } = await api.get("/dashboard/overview");
           setMetrics(data.data);
-        }
-        // For tenant and landlord – fetch personal data
-        else if (role === "TENANT" || role === "LANDLORD") {
+        } else if (role === "TENANT" || role === "LANDLORD") {
           const [contracts, payments, maintenance] = await Promise.all([
             api.get("/contracts"),
             api.get("/payments"),
@@ -65,9 +61,9 @@ export default function Dashboard() {
     );
   }
 
-  // ============================================
+  // ==========================================
   // ADMIN / MANAGER / ACCOUNTANT DASHBOARD
-  // ============================================
+  // ==========================================
   if (["SYSTEM_ADMIN", "PROPERTY_MANAGER", "ACCOUNTANT"].includes(role || "")) {
     const cards = [
       {
@@ -105,7 +101,12 @@ export default function Dashboard() {
               Overview of your property management system
             </p>
           </div>
-          <button className="btn-primary">Download Report</button>
+          <button
+            onClick={() => navigate("/sales")}
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Download Report
+          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -122,14 +123,29 @@ export default function Dashboard() {
           <div className="card">
             <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-2">
-              <button className="w-full text-left px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100">
+              <Link
+                to="/properties/new"
+                className="w-full block text-left px-4 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition"
+              >
                 ➕ New Property
-              </button>
-              <button className="w-full text-left px-4 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100">
+              </Link>
+              <Link
+                to="/contracts/new"
+                className="w-full block text-left px-4 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition"
+              >
                 📄 New Contract
-              </button>
-              <button className="w-full text-left px-4 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100">
+              </Link>
+              <Link
+                to="/maintenance/new"
+                className="w-full block text-left px-4 py-2 bg-yellow-50 text-yellow-600 rounded-lg hover:bg-yellow-100 transition"
+              >
                 🔧 Report Maintenance
+              </Link>
+              <button
+                onClick={() => navigate("/sales")}
+                className="w-full text-left px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition"
+              >
+                📊 View Reports
               </button>
             </div>
           </div>
@@ -143,9 +159,9 @@ export default function Dashboard() {
     );
   }
 
-  // ============================================
+  // ==========================================
   // TENANT DASHBOARD
-  // ============================================
+  // ==========================================
   if (role === "TENANT") {
     const totalContracts = tenantData?.contracts?.length || 0;
     const totalPayments =
@@ -261,9 +277,9 @@ export default function Dashboard() {
     );
   }
 
-  // ============================================
+  // ==========================================
   // LANDLORD DASHBOARD
-  // ============================================
+  // ==========================================
   if (role === "LANDLORD") {
     return (
       <div className="space-y-6">
@@ -273,15 +289,14 @@ export default function Dashboard() {
           <p className="text-gray-500">
             Your properties and rental income will appear here.
           </p>
-          {/* You can expand this similarly to tenant */}
         </div>
       </div>
     );
   }
 
-  // ============================================
+  // ==========================================
   // LEGAL_ADMIN DASHBOARD
-  // ============================================
+  // ==========================================
   if (role === "LEGAL_ADMIN") {
     return (
       <div className="space-y-6">
