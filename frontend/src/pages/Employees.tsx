@@ -10,7 +10,7 @@ import api from "../api/client";
 import { User } from "../types";
 import { StatusBadge } from "../components/common/StatusBadge";
 
-// Employee roles: exclude TENANT and LANDLORD
+// Employee roles – exclude TENANT and LANDLORD
 const EMPLOYEE_ROLES = [
   "SYSTEM_ADMIN",
   "PROPERTY_MANAGER",
@@ -25,7 +25,9 @@ export default function Employees() {
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("");
 
+  // Fetch employees from API
   const fetchEmployees = async () => {
+    setLoading(true);
     try {
       const { data } = await api.get("/users");
       // Filter only employee roles
@@ -44,17 +46,37 @@ export default function Employees() {
     fetchEmployees();
   }, []);
 
+  // Delete handler
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete ${name}?`)) return;
     try {
       await api.delete(`/users/${id}`);
-      fetchEmployees(); // Refresh list
+      // Refresh list after deletion
+      fetchEmployees();
     } catch (error) {
       console.error("Failed to delete employee:", error);
       alert("Failed to delete employee. Please try again.");
     }
   };
 
+  // Format role name for display
+  const getRoleLabel = (role: string) => {
+    const roleMap: Record<string, string> = {
+      SYSTEM_ADMIN: "System Admin",
+      PROPERTY_MANAGER: "Property Manager",
+      ACCOUNTANT: "Accountant",
+      LEGAL_ADMIN: "Legal Admin",
+    };
+    return (
+      roleMap[role] ||
+      role
+        .replace("_", " ")
+        .toLowerCase()
+        .replace(/\b\w/g, (l) => l.toUpperCase())
+    );
+  };
+
+  // Filter employees based on search and role filter
   const filteredEmployees = employees.filter((emp) => {
     const matchSearch =
       emp.firstName.toLowerCase().includes(search.toLowerCase()) ||
@@ -63,13 +85,6 @@ export default function Employees() {
     const matchRole = filterRole ? emp.role === filterRole : true;
     return matchSearch && matchRole;
   });
-
-  const getRoleLabel = (role: string) => {
-    return role
-      .replace("_", " ")
-      .toLowerCase()
-      .replace(/\b\w/g, (l) => l.toUpperCase());
-  };
 
   if (loading) {
     return (
@@ -98,7 +113,7 @@ export default function Employees() {
 
       {/* Search & Filter */}
       <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
+        <div className="relative flex-1 max-w-md">
           <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
           <input
             type="text"
