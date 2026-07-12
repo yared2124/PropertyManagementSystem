@@ -69,32 +69,32 @@ export default function Dashboard() {
   // ADMIN / MANAGER / ACCOUNTANT DASHBOARD
   // ============================================
   if (["SYSTEM_ADMIN", "PROPERTY_MANAGER", "ACCOUNTANT"].includes(role || "")) {
-    const cards = [
-      {
-        title: "Total Assets",
-        value: metrics?.totalAssets || 0,
-        icon: BuildingOffice2Icon,
-        color: "blue",
-      },
-      {
-        title: "Active Contracts",
-        value: metrics?.activeContracts || 0,
-        icon: DocumentTextIcon,
-        color: "green",
-      },
-      {
-        title: "Pending Maintenance",
-        value: metrics?.pendingMaintenance || 0,
-        icon: WrenchScrewdriverIcon,
-        color: "yellow",
-      },
-      {
-        title: "Total Paid",
-        value: `SAR ${metrics?.totalPaid?.toLocaleString() || 0}`,
-        icon: CreditCardIcon,
-        color: "purple",
-      },
-    ];
+   const cards = [
+     {
+       title: "Total Assets",
+       value: metrics?.totalAssets || 0,
+       icon: BuildingOffice2Icon,
+       color: "blue",
+     },
+     {
+       title: "Active Contracts",
+       value: metrics?.activeContracts || 0,
+       icon: DocumentTextIcon,
+       color: "green",
+     },
+     {
+       title: "Pending Maintenance",
+       value: metrics?.pendingMaintenance || 0,
+       icon: WrenchScrewdriverIcon,
+       color: "yellow",
+     },
+     {
+       title: "Total Paid",
+       value: `SAR ${metrics?.totalPaid?.toLocaleString() || 0}`,
+       icon: CreditCardIcon,
+       color: "purple",
+     },
+   ];
 
     return (
       <div className="space-y-6">
