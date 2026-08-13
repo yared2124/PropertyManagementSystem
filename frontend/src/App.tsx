@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { Layout } from "./components/common/Layout";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { PRIVILEGE_ROLES } from "./utils/roles";
 
 // ----- Public Pages -----
 import Home from "./pages/Home"; // ✅ ADD THIS
@@ -56,23 +57,58 @@ function App() {
               {/* ----- Accessible by all authenticated users ----- */}
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/notifications" element={<Notifications />} />
               <Route path="/calendar" element={<Calendar />} />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.settings}>
+                    <Settings />
+                  </ProtectedRoute>
+                }
+              />
 
-              {/* ----- Tenants & Landlords (own data) ----- */}
-              <Route path="/contracts" element={<Contracts />} />
-              <Route path="/contracts/:id" element={<ContractDetail />} />
-              <Route path="/payments" element={<Payments />} />
-              <Route path="/maintenance" element={<Maintenance />} />
+              {/* ----- Role-scoped operational data ----- */}
+              <Route
+                path="/contracts"
+                element={
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.contractsView}>
+                    <Contracts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/contracts/:id"
+                element={
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.contractsView}>
+                    <ContractDetail />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/payments"
+                element={
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.paymentsView}>
+                    <Payments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/maintenance"
+                element={
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.maintenanceView}>
+                    <Maintenance />
+                  </ProtectedRoute>
+                }
+              />
 
               {/* ----- Property Managers & Admins ----- */}
               <Route
                 path="/properties"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesView}
                   >
                     <Properties />
                   </ProtectedRoute>
@@ -82,7 +118,7 @@ function App() {
                 path="/properties/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesManage}
                   >
                     <PropertyForm />
                   </ProtectedRoute>
@@ -92,7 +128,7 @@ function App() {
                 path="/properties/:id"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesView}
                   >
                     <PropertyDetail />
                   </ProtectedRoute>
@@ -102,7 +138,7 @@ function App() {
                 path="/properties/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesManage}
                   >
                     <PropertyForm />
                   </ProtectedRoute>
@@ -114,7 +150,7 @@ function App() {
                 path="/vehicles"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.vehiclesView}
                   >
                     <Vehicles />
                   </ProtectedRoute>
@@ -124,7 +160,7 @@ function App() {
                 path="/vehicles/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.vehiclesManage}
                   >
                     <VehicleForm />
                   </ProtectedRoute>
@@ -134,7 +170,7 @@ function App() {
                 path="/vehicles/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.vehiclesManage}
                   >
                     <VehicleForm />
                   </ProtectedRoute>
@@ -146,7 +182,7 @@ function App() {
                 path="/contracts/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.contractsManage}
                   >
                     <ContractForm />
                   </ProtectedRoute>
@@ -156,7 +192,7 @@ function App() {
                 path="/contracts/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.contractsManage}
                   >
                     <ContractForm />
                   </ProtectedRoute>
@@ -168,7 +204,7 @@ function App() {
                 path="/rentals"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesManage}
                   >
                     <Rentals />
                   </ProtectedRoute>
@@ -180,7 +216,7 @@ function App() {
                 path="/maintenance/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.maintenanceCreate}
                   >
                     <MaintenanceForm />
                   </ProtectedRoute>
@@ -190,7 +226,7 @@ function App() {
                 path="/maintenance/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.maintenanceManage}
                   >
                     <MaintenanceForm />
                   </ProtectedRoute>
@@ -202,7 +238,7 @@ function App() {
                 path="/inspections"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.inspectionsView}
                   >
                     <Inspections />
                   </ProtectedRoute>
@@ -212,7 +248,7 @@ function App() {
                 path="/inspections/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.inspectionsManage}
                   >
                     <InspectionForm />
                   </ProtectedRoute>
@@ -222,7 +258,7 @@ function App() {
                 path="/inspections/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.inspectionsManage}
                   >
                     <InspectionForm />
                   </ProtectedRoute>
@@ -234,11 +270,7 @@ function App() {
                 path="/poa"
                 element={
                   <ProtectedRoute
-                    requiredRole={[
-                      "SYSTEM_ADMIN",
-                      "PROPERTY_MANAGER",
-                      "LEGAL_ADMIN",
-                    ]}
+                    requiredRole={PRIVILEGE_ROLES.poaView}
                   >
                     <POA />
                   </ProtectedRoute>
@@ -248,11 +280,7 @@ function App() {
                 path="/poa/new"
                 element={
                   <ProtectedRoute
-                    requiredRole={[
-                      "SYSTEM_ADMIN",
-                      "PROPERTY_MANAGER",
-                      "LEGAL_ADMIN",
-                    ]}
+                    requiredRole={PRIVILEGE_ROLES.poaManage}
                   >
                     <POAForm />
                   </ProtectedRoute>
@@ -262,11 +290,7 @@ function App() {
                 path="/poa/:id/edit"
                 element={
                   <ProtectedRoute
-                    requiredRole={[
-                      "SYSTEM_ADMIN",
-                      "PROPERTY_MANAGER",
-                      "LEGAL_ADMIN",
-                    ]}
+                    requiredRole={PRIVILEGE_ROLES.poaManage}
                   >
                     <POAForm />
                   </ProtectedRoute>
@@ -277,7 +301,7 @@ function App() {
               <Route
                 path="/employees"
                 element={
-                  <ProtectedRoute requiredRole="SYSTEM_ADMIN">
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.employeesView}>
                     <Employees />
                   </ProtectedRoute>
                 }
@@ -285,7 +309,7 @@ function App() {
               <Route
                 path="/salaries"
                 element={
-                  <ProtectedRoute requiredRole="SYSTEM_ADMIN">
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.salariesView}>
                     <Salaries />
                   </ProtectedRoute>
                 }
@@ -293,7 +317,7 @@ function App() {
               <Route
                 path="/attendances"
                 element={
-                  <ProtectedRoute requiredRole="SYSTEM_ADMIN">
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.attendancesView}>
                     <Attendances />
                   </ProtectedRoute>
                 }
@@ -303,7 +327,7 @@ function App() {
               <Route
                 path="/users"
                 element={
-                  <ProtectedRoute requiredRole="SYSTEM_ADMIN">
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.usersView}>
                     <Users />
                   </ProtectedRoute>
                 }
@@ -313,7 +337,7 @@ function App() {
               <Route
                 path="/audit-logs"
                 element={
-                  <ProtectedRoute requiredRole="SYSTEM_ADMIN">
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.auditLogs}>
                     <AuditLogs />
                   </ProtectedRoute>
                 }
@@ -323,7 +347,7 @@ function App() {
               <Route
                 path="/sales"
                 element={
-                  <ProtectedRoute requiredRole={["SYSTEM_ADMIN", "ACCOUNTANT"]}>
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.reportsView}>
                     <Sales />
                   </ProtectedRoute>
                 }
@@ -334,7 +358,7 @@ function App() {
                 path="/lands"
                 element={
                   <ProtectedRoute
-                    requiredRole={["SYSTEM_ADMIN", "PROPERTY_MANAGER"]}
+                    requiredRole={PRIVILEGE_ROLES.propertiesView}
                   >
                     <Lands />
                   </ProtectedRoute>
