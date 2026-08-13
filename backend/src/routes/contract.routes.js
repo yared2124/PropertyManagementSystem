@@ -21,10 +21,32 @@ router.post(
 );
 
 // --- List contracts (optional filters) ---
-router.get("/", contractController.findAll);
+router.get(
+  "/",
+  requireRole([
+    "SYSTEM_ADMIN",
+    "PROPERTY_MANAGER",
+    "TENANT",
+    "LANDLORD",
+    "ACCOUNTANT",
+    "LEGAL_ADMIN",
+  ]),
+  contractController.findAll,
+);
 
 // --- Get contract by ID ---
-router.get("/:id", contractController.findById);
+router.get(
+  "/:id",
+  requireRole([
+    "SYSTEM_ADMIN",
+    "PROPERTY_MANAGER",
+    "TENANT",
+    "LANDLORD",
+    "ACCOUNTANT",
+    "LEGAL_ADMIN",
+  ]),
+  contractController.findById,
+);
 
 // --- Update contract ---
 router.put(
@@ -37,7 +59,7 @@ router.put(
 // --- Delete contract (soft delete) ---
 router.delete(
   "/:id",
-  requireRole(["SYSTEM_ADMIN"]),
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   auditLog("DELETE"),
   contractController.delete,
 );
