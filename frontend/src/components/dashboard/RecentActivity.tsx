@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
 import api from "../../api/client";
-import { StatusBadge } from "../common/StatusBadge";
-
 interface Activity {
   id: string;
   action: string;
@@ -35,11 +33,19 @@ export default function RecentActivity() {
   }, []);
 
   if (loading) {
-    return <div className="text-sm text-gray-500">Loading activity...</div>;
+    return (
+      <div className="rounded-xl bg-[#f9f1e2] px-4 py-8 text-center text-sm font-semibold text-[#8a6730]">
+        Loading activity...
+      </div>
+    );
   }
 
   if (activities.length === 0) {
-    return <div className="text-sm text-gray-500">No recent activity</div>;
+    return (
+      <div className="rounded-xl bg-[#f9f1e2] px-4 py-8 text-center text-sm font-semibold text-[#8a6730]">
+        No recent activity
+      </div>
+    );
   }
 
   // Map audit actions to friendly descriptions
@@ -60,33 +66,33 @@ export default function RecentActivity() {
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-hidden rounded-xl border border-[#eae0d0]">
       <table className="w-full">
         <thead>
-          <tr className="text-left text-sm text-gray-500 border-b border-gray-200">
-            <th className="pb-3 font-medium">Activity</th>
-            <th className="pb-3 font-medium">User</th>
-            <th className="pb-3 font-medium">Date</th>
+          <tr className="border-b border-[#eae0d0] bg-[#f9f1e2] text-left text-xs uppercase text-[#8a6730]">
+            <th className="px-4 py-3 font-bold">Activity</th>
+            <th className="px-4 py-3 font-bold">User</th>
+            <th className="px-4 py-3 font-bold">Date</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100">
+        <tbody className="divide-y divide-[#eae0d0] bg-white">
           {activities.map((activity) => (
             <tr
               key={activity.id}
-              className="hover:bg-gray-50 transition-colors"
+              className="transition-colors hover:bg-[#f9f1e2]/40"
             >
-              <td className="py-3 text-sm text-gray-900">
+              <td className="px-4 py-3 text-sm font-semibold text-slate-900">
                 {getDescription(activity)}
                 {activity.entityId && (
-                  <span className="text-xs text-gray-400 ml-1">
+                  <span className="ml-1 text-xs font-medium text-slate-400">
                     #{activity.entityId.slice(0, 8)}
                   </span>
                 )}
               </td>
-              <td className="py-3 text-sm text-gray-600">
+              <td className="px-4 py-3 text-sm text-slate-600">
                 {activity.user?.firstName} {activity.user?.lastName}
               </td>
-              <td className="py-3 text-sm text-gray-500">
+              <td className="px-4 py-3 text-sm text-slate-500">
                 {new Date(activity.createdAt).toLocaleString()}
               </td>
             </tr>
