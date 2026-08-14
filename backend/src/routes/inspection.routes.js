@@ -20,10 +20,18 @@ router.post(
 );
 
 // --- List inspections (with filters) ---
-router.get("/", inspectionController.findAll);
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LANDLORD"]),
+  inspectionController.findAll,
+);
 
 // --- Get inspection by ID ---
-router.get("/:id", inspectionController.findById);
+router.get(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LANDLORD"]),
+  inspectionController.findById,
+);
 
 // --- Update inspection ---
 router.put(
@@ -36,7 +44,7 @@ router.put(
 // --- Delete inspection ---
 router.delete(
   "/:id",
-  requireRole(["SYSTEM_ADMIN"]),
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   auditLog("DELETE"),
   inspectionController.delete,
 );
