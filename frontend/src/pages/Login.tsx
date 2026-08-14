@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
-import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
-
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  BuildingOffice2Icon,
+  LockClosedIcon,
+  ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
 import coverImage from "../assets/cover.png";
 
 export default function Login() {
@@ -28,164 +33,137 @@ export default function Login() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* Navigation Bar */}
-      <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-100 z-10 flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <BuildingOffice2Icon className="w-8 h-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">
-                PROPERTYMANAGER
+    <div className="min-h-screen bg-[#0f172a] text-slate-950">
+      <div className="grid min-h-screen lg:grid-cols-[1.05fr_0.95fr]">
+        <section className="relative hidden overflow-hidden lg:block">
+          <img
+            src={coverImage}
+            alt="Property management"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[#0f172a]/70" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_22%,rgba(214,183,125,0.28),transparent_22rem),radial-gradient(circle_at_80%_12%,rgba(16,185,129,0.18),transparent_23rem)]" />
+          <div className="relative flex h-full flex-col justify-between p-10 text-white">
+            <Link to="/" className="flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6b77d] to-[#8a6730] text-sm font-black text-[#0f172a]">
+                PM
+              </span>
+              <span className="text-lg font-black tracking-wide">
+                EstateFlow
               </span>
             </Link>
-            <div className="hidden md:flex items-center space-x-8">
+
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase text-[#f6e6bf] backdrop-blur">
+                <ShieldCheckIcon className="h-4 w-4" />
+                Secure workspace
+              </div>
+              <h1 className="mt-5 text-5xl font-black tracking-normal">
+                Welcome back to your property command center.
+              </h1>
+              <p className="mt-4 text-sm leading-6 text-slate-200">
+                Continue managing contracts, payments, maintenance, and reports
+                from one calm operating view.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_right,rgba(214,183,125,0.12),transparent_22rem),linear-gradient(135deg,#f8f5f0_0%,#f3efe8_50%,#f7f3ee_100%)] px-4 py-8 sm:px-6">
+          <div className="w-full max-w-md">
+            <div className="mb-8 flex items-center justify-between">
               <Link
                 to="/"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
+                className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-[#8a6730]"
               >
+                <ArrowLeftIcon className="h-4 w-4" />
                 Home
               </Link>
               <Link
-                to="/features"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Features
-              </Link>
-              <Link
-                to="/about"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                About
-              </Link>
-              <Link
-                to="/service"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Service
-              </Link>
-              <Link
-                to="/contact"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Contact
-              </Link>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg transition"
-              >
-                LOGIN
-              </Link>
-              <Link
                 to="/register"
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                className="rounded-xl border border-[#d9c7a2] bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-[#c9a96d] hover:text-[#8a6730]"
               >
-                Get Started
+                Create account
               </Link>
             </div>
-          </div>
-        </div>
-      </nav>
 
-      {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Left side – Cover Image */}
-        <div
-          className="hidden lg:block lg:w-1/2 bg-cover bg-center bg-no-repeat relative"
-          style={{ backgroundImage: `url(${coverImage})` }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative h-full flex flex-col items-center justify-center text-white p-8">
-            <BuildingOffice2Icon className="w-24 h-24 text-white/90" />
-            <h1 className="text-4xl font-bold mt-4">PROPERTYMANAGER</h1>
-            <p className="text-xl text-white/80 mt-2">
-              Smart Property Management
-            </p>
-            <p className="text-sm text-white/60 mt-8 max-w-sm text-center">
-              Manage your properties, contracts, and payments – all in one
-              place.
-            </p>
-          </div>
-        </div>
-
-        {/* Right side – Login Form */}
-        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-y-auto">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-2xl mb-4">
-                <BuildingOffice2Icon className="w-8 h-8 text-white" />
+            <div className="rounded-3xl border border-[#e8dfd1] bg-white/90 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.10)] backdrop-blur sm:p-8">
+              <div className="mb-8">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0f172a] text-[#d6b77d]">
+                  <BuildingOffice2Icon className="h-7 w-7" />
+                </div>
+                <h1 className="text-3xl font-black tracking-normal text-slate-950">
+                  Sign in
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Access your EstateFlow workspace.
+                </p>
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
-              <p className="text-gray-500 mt-1">Sign in to your account</p>
+
+              {error && (
+                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+                  {error}
+                </div>
+              )}
+
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-4"
+                autoComplete="off"
+              >
+                <div className="hidden">
+                  <input type="text" name="fakeEmail" value="" readOnly />
+                  <input
+                    type="password"
+                    name="fakePassword"
+                    value=""
+                    readOnly
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="off"
+                    className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <LockClosedIcon className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-[#8a6730]" />
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="off"
+                      className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] py-3 pl-12 pr-4 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                      placeholder="Enter your password"
+                      required
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f172a] px-4 py-3 text-sm font-black text-white shadow-[0_16px_36px_rgba(24,32,48,0.22)] transition hover:-translate-y-0.5 hover:bg-[#1b2c3d] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Signing in..." : "Sign In"}
+                  <ArrowRightIcon className="h-5 w-5" />
+                </button>
+              </form>
             </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
-                {error}
-              </div>
-            )}
-
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-              autoComplete="off"
-            >
-              {/* ===== DUMMY FIELDS TO CONFUSE BROWSER AUTOFILL ===== */}
-              <div className="hidden">
-                <input type="text" name="fakeEmail" value="" readOnly />
-                <input type="password" name="fakePassword" value="" readOnly />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  autoComplete="off"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="off"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Signing in..." : "Sign In"}
-              </button>
-            </form>
-
-            <p className="text-center text-sm text-gray-600 mt-6">
-              Don't have an account?{" "}
-              <Link
-                to="/register"
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Create one
-              </Link>
-            </p>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   );
