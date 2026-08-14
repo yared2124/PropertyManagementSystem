@@ -1,16 +1,23 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  PlusIcon,
-  MagnifyingGlassIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, PlusIcon, TrashIcon, UserGroupIcon } from "@heroicons/react/24/outline";
 import api from "../api/client";
 import { User } from "../types";
 import { StatusBadge } from "../components/common/StatusBadge";
+import {
+  EmptyState,
+  FilterSelect,
+  LoadingState,
+  PageHeader,
+  Panel,
+  PrimaryButton,
+  SearchInput,
+  tableCellClass,
+  tableClass,
+  tableHeadCellClass,
+  tableHeadClass,
+} from "../components/common/Page";
 
-// Employee roles – exclude TENANT and LANDLORD
 const EMPLOYEE_ROLES = [
   "SYSTEM_ADMIN",
   "PROPERTY_MANAGER",
@@ -25,16 +32,13 @@ export default function Employees() {
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("");
 
-  // Fetch employees from API
   const fetchEmployees = async () => {
     setLoading(true);
     try {
       const { data } = await api.get("/users");
-      // Filter only employee roles
-      const filtered = data.data.filter((user: User) =>
-        EMPLOYEE_ROLES.includes(user.role),
+      setEmployees(
+        data.data.filter((user: User) => EMPLOYEE_ROLES.includes(user.role)),
       );
-      setEmployees(filtered);
     } catch (error) {
       console.error("Failed to fetch employees:", error);
     } finally {
@@ -46,12 +50,10 @@ export default function Employees() {
     fetchEmployees();
   }, []);
 
-  // Delete handler
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`Are you sure you want to delete ${name}?`)) return;
     try {
       await api.delete(`/users/${id}`);
-      // Refresh list after deletion
       fetchEmployees();
     } catch (error) {
       console.error("Failed to delete employee:", error);
@@ -59,7 +61,6 @@ export default function Employees() {
     }
   };
 
-  // Format role name for display
   const getRoleLabel = (role: string) => {
     const roleMap: Record<string, string> = {
       SYSTEM_ADMIN: "System Admin",
@@ -67,139 +68,113 @@ export default function Employees() {
       ACCOUNTANT: "Accountant",
       LEGAL_ADMIN: "Legal Admin",
     };
-    return (
-      roleMap[role] ||
-      role
-        .replace("_", " ")
-        .toLowerCase()
-        .replace(/\b\w/g, (l) => l.toUpperCase())
-    );
+    return roleMap[role] || role.replace("_", " ");
   };
 
-  // Filter employees based on search and role filter
   const filteredEmployees = employees.filter((emp) => {
+    const term = search.toLowerCase();
     const matchSearch =
-      emp.firstName.toLowerCase().includes(search.toLowerCase()) ||
-      emp.lastName.toLowerCase().includes(search.toLowerCase()) ||
-      emp.email.toLowerCase().includes(search.toLowerCase());
-    const matchRole = filterRole ? emp.role === filterRole : true;
-    return matchSearch && matchRole;
+      emp.firstName.toLowerCase().includes(term) ||
+      emp.lastName.toLowerCase().includes(term) ||
+      emp.email.toLowerCase().includes(term);
+    return matchSearch && (filterRole ? emp.role === filterRole : true);
   });
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        Loading employees...
-      </div>
-    );
-  }
+  if (loading) return <LoadingState label="Loading employees..." />;
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Employees</h1>
-          <p className="text-gray-600">Manage your team members</p>
-        </div>
-        <button
-          onClick={() => navigate("/users/new?role=PROPERTY_MANAGER")}
-          className="btn-primary flex items-center space-x-2"
-        >
-          <PlusIcon className="w-5 h-5" />
-          <span>Add Employee</span>
-        </button>
-      </div>
+      <PageHeader
+        eyebrow="Team"
+        title="Employees"
+        description="Manage staff accounts, roles, access, and internal users."
+        action={
+          <PrimaryButton onClick={() => navigate("/users/new?role=PROPERTY_MANAGER")}>
+            <PlusIcon className="h-5 w-5" />
+            <span>Add Employee</span>
+          </PrimaryButton>
+        }
+      />
 
-      {/* Search & Filter */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1 max-w-md">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
+      <Panel className="p-4">
+        <div className="flex flex-col gap-4 md:flex-row">
+          <SearchInput
             placeholder="Search employees..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            onChange={setSearch}
           />
+          <FilterSelect value={filterRole} onChange={setFilterRole}>
+            <option value="">All Roles</option>
+            {EMPLOYEE_ROLES.map((role) => (
+              <option key={role} value={role}>
+                {getRoleLabel(role)}
+              </option>
+            ))}
+          </FilterSelect>
         </div>
-        <select
-          value={filterRole}
-          onChange={(e) => setFilterRole(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Roles</option>
-          {EMPLOYEE_ROLES.map((role) => (
-            <option key={role} value={role}>
-              {getRoleLabel(role)}
-            </option>
-          ))}
-        </select>
-      </div>
+      </Panel>
 
-      {/* Employee Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-x-auto">
-        <table className="w-full">
-          <thead className="bg-gray-50 border-b border-gray-200">
-            <tr className="text-left text-sm text-gray-500">
-              <th className="px-6 py-3 font-medium">Name</th>
-              <th className="px-6 py-3 font-medium">Email</th>
-              <th className="px-6 py-3 font-medium">Role</th>
-              <th className="px-6 py-3 font-medium">Status</th>
-              <th className="px-6 py-3 font-medium">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredEmployees.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={5}
-                  className="px-6 py-12 text-center text-gray-500"
-                >
-                  No employees found. Add one by clicking "Add Employee".
-                </td>
-              </tr>
-            ) : (
-              filteredEmployees.map((emp) => (
-                <tr key={emp.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    {emp.firstName} {emp.lastName}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {emp.email}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {getRoleLabel(emp.role)}
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge
-                      status={emp.isActive ? "Active" : "Inactive"}
-                    />
-                  </td>
-                  <td className="px-6 py-4 text-sm space-x-2">
-                    <Link
-                      to={`/users/${emp.id}/edit`}
-                      className="inline-flex items-center px-2 py-1 text-blue-600 hover:bg-blue-50 rounded transition"
-                    >
-                      <PencilIcon className="w-4 h-4 mr-1" />
-                      Edit
-                    </Link>
-                    <button
-                      onClick={() =>
-                        handleDelete(emp.id, `${emp.firstName} ${emp.lastName}`)
-                      }
-                      className="inline-flex items-center px-2 py-1 text-red-600 hover:bg-red-50 rounded transition"
-                    >
-                      <TrashIcon className="w-4 h-4 mr-1" />
-                      Delete
-                    </button>
-                  </td>
+      <Panel className="overflow-hidden">
+        {filteredEmployees.length === 0 ? (
+          <div className="p-5">
+            <EmptyState title="No employees found" />
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className={tableClass}>
+              <thead className={tableHeadClass}>
+                <tr>
+                  <th className={tableHeadCellClass}>Name</th>
+                  <th className={tableHeadCellClass}>Email</th>
+                  <th className={tableHeadCellClass}>Role</th>
+                  <th className={tableHeadCellClass}>Status</th>
+                  <th className={tableHeadCellClass}>Actions</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100 bg-white">
+                {filteredEmployees.map((emp) => (
+                  <tr key={emp.id} className="transition hover:bg-cyan-50/50">
+                    <td className={`${tableCellClass} font-black text-slate-950`}>
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-cyan-50 text-xs font-black text-cyan-700">
+                          {emp.firstName[0]}
+                          {emp.lastName[0]}
+                        </span>
+                        {emp.firstName} {emp.lastName}
+                      </div>
+                    </td>
+                    <td className={`${tableCellClass} text-slate-600`}>{emp.email}</td>
+                    <td className={`${tableCellClass} text-slate-600`}>
+                      {getRoleLabel(emp.role)}
+                    </td>
+                    <td className={tableCellClass}>
+                      <StatusBadge status={emp.isActive === false ? "Inactive" : "Active"} />
+                    </td>
+                    <td className={tableCellClass}>
+                      <div className="flex gap-2">
+                        <Link
+                          to={`/users/${emp.id}/edit`}
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-cyan-700 transition hover:bg-cyan-50"
+                        >
+                          <PencilIcon className="h-4 w-4" />
+                        </Link>
+                        <button
+                          onClick={() =>
+                            handleDelete(emp.id, `${emp.firstName} ${emp.lastName}`)
+                          }
+                          className="flex h-9 w-9 items-center justify-center rounded-xl text-rose-600 transition hover:bg-rose-50"
+                        >
+                          <TrashIcon className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Panel>
     </div>
   );
 }
