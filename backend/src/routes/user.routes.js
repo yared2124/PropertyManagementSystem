@@ -30,24 +30,35 @@ router.post(
   userController.changePassword,
 );
 
-// ===== Admin routes (require SYSTEM_ADMIN role) =====
-router.use(requireRole(["SYSTEM_ADMIN"]));
-
-router.get("/", validate(userFilterSchema, "query"), userController.list);
+// ===== User directory: admin can manage, manager can view =====
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
+  validate(userFilterSchema, "query"),
+  userController.list,
+);
 router.get(
   "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   validate(userIdParamSchema, "params"),
   userController.getById,
 );
-router.post("/", validate(createUserSchema), userController.create);
+router.post(
+  "/",
+  requireRole(["SYSTEM_ADMIN"]),
+  validate(createUserSchema),
+  userController.create,
+);
 router.put(
   "/:id",
+  requireRole(["SYSTEM_ADMIN"]),
   validate(userIdParamSchema, "params"),
   validate(updateUserSchema),
   userController.update,
 );
 router.delete(
   "/:id",
+  requireRole(["SYSTEM_ADMIN"]),
   validate(userIdParamSchema, "params"),
   userController.delete,
 );
