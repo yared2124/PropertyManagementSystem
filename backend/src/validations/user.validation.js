@@ -58,6 +58,7 @@ export const createUserSchema = Joi.object({
       "LEGAL_ADMIN",
     )
     .required(),
+  isActive: Joi.boolean().default(true),
   phone: Joi.string()
     .pattern(/^[0-9+\-\s()]+$/)
     .optional(),
@@ -91,6 +92,7 @@ export const updateUserSchema = Joi.object({
       "LEGAL_ADMIN",
     )
     .optional(),
+  isActive: Joi.boolean().optional(),
   phone: Joi.string()
     .pattern(/^[0-9+\-\s()]+$/)
     .optional(),
