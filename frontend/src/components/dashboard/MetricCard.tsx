@@ -15,11 +15,11 @@ interface MetricCardProps {
 
 const colorMap = {
   blue: {
-    icon: "bg-blue-50 text-blue-600 ring-blue-100",
-    accent: "from-blue-500 to-cyan-500",
+    icon: "bg-cyan-50 text-cyan-700 ring-cyan-100",
+    accent: "from-cyan-500 to-blue-500",
   },
   green: {
-    icon: "bg-emerald-50 text-emerald-600 ring-emerald-100",
+    icon: "bg-emerald-50 text-emerald-700 ring-emerald-100",
     accent: "from-emerald-500 to-teal-500",
   },
   yellow: {
@@ -51,14 +51,15 @@ const MetricCard: FC<MetricCardProps> = ({
   const colors = colorMap[color];
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="group relative overflow-hidden rounded-2xl border border-[#eae0d0] bg-white p-5 shadow-[0_8px_24px_rgba(148,117,64,0.05)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_12px_32px_rgba(148,117,64,0.12)]">
       <div
-        className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${colors.accent}`}
+        className={`absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r ${colors.accent}`}
       />
+      <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[#f9f1e2]/80 transition group-hover:scale-110" />
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="mt-2 truncate text-2xl font-bold tracking-normal text-gray-950">
+        <div className="relative min-w-0">
+          <p className="text-sm font-semibold text-[#8a6730]">{title}</p>
+          <p className="mt-2 truncate text-2xl font-black tracking-normal text-slate-950">
             {value}
           </p>
           {trend && (
@@ -77,7 +78,7 @@ const MetricCard: FC<MetricCardProps> = ({
           )}
         </div>
         <div
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ring-1 ${colors.icon}`}
+          className={`relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl ring-1 ${colors.icon}`}
         >
           <Icon className="h-6 w-6" />
         </div>
