@@ -1,346 +1,234 @@
 import { Link } from "react-router-dom";
 import {
-  BuildingOffice2Icon,
-  DocumentTextIcon,
-  UserGroupIcon,
-  ChartBarIcon,
-  ShieldCheckIcon,
-  ClockIcon,
-  AcademicCapIcon,
   ArrowRightIcon,
+  BanknotesIcon,
+  BuildingOffice2Icon,
+  ChartBarIcon,
+  CheckCircleIcon,
+  ClipboardDocumentListIcon,
+  ShieldCheckIcon,
+  WrenchScrewdriverIcon,
 } from "@heroicons/react/24/outline";
+import coverImage from "../assets/cover.png";
+
+const features = [
+  {
+    title: "Property Portfolio",
+    copy: "Track buildings, lands, vehicles, rent status, and ownership records from one organized workspace.",
+    icon: BuildingOffice2Icon,
+    tone: "bg-[#f9f1e2] text-[#8a6730]",
+  },
+  {
+    title: "Contracts",
+    copy: "Create leases, monitor active agreements, and keep key dates visible before they become urgent.",
+    icon: ClipboardDocumentListIcon,
+    tone: "bg-emerald-50 text-emerald-700",
+  },
+  {
+    title: "Payments",
+    copy: "Follow paid, overdue, and upcoming payments with clear financial summaries for every role.",
+    icon: BanknotesIcon,
+    tone: "bg-amber-50 text-amber-700",
+  },
+  {
+    title: "Maintenance",
+    copy: "Capture requests, prioritize work, and keep tenants and managers aligned on progress.",
+    icon: WrenchScrewdriverIcon,
+    tone: "bg-violet-50 text-violet-700",
+  },
+];
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* ========== NAVIGATION ========== */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
-              <BuildingOffice2Icon className="w-8 h-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">
-                PROPERTYMANAGER
-              </span>
+    <div className="min-h-screen bg-[#0f172a] text-white">
+      <nav className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-[#0f172a]/70 backdrop-blur-xl">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6b77d] to-[#8a6730] text-sm font-black text-[#0f172a]">
+              PM
+            </span>
+            <span className="text-lg font-black tracking-wide">EstateFlow</span>
+          </Link>
+
+          <div className="hidden items-center gap-8 md:flex">
+            <a
+              href="#features"
+              className="text-sm font-semibold text-slate-300 hover:text-white"
+            >
+              Features
+            </a>
+            <a
+              href="#insights"
+              className="text-sm font-semibold text-slate-300 hover:text-white"
+            >
+              Insights
+            </a>
+            <a
+              href="#security"
+              className="text-sm font-semibold text-slate-300 hover:text-white"
+            >
+              Security
+            </a>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Link
+              to="/login"
+              className="rounded-xl px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10 hover:text-white"
+            >
+              Login
             </Link>
-
-            {/* Navigation Links */}
-            <div className="hidden md:flex items-center space-x-8">
-              <Link
-                to="/"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Home
-              </Link>
-              <Link
-                to="/features"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Features
-              </Link>
-              <Link
-                to="/about"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                About
-              </Link>
-              <Link
-                to="/service"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Service
-              </Link>
-              <Link
-                to="/contact"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Contact
-              </Link>
-            </div>
-
-            {/* Auth Buttons */}
-            <div className="flex items-center space-x-3">
-              <Link
-                to="/login"
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
-              >
-                LOGIN
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition"
-              >
-                Get Started
-              </Link>
-            </div>
+            <Link
+              to="/register"
+              className="rounded-xl bg-white px-4 py-2 text-sm font-bold text-[#0f172a] shadow-lg shadow-[#b98d46]/20 transition hover:bg-[#f9f1e2]"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       </nav>
 
-      {/* ========== HERO SECTION ========== */}
-      <section className="pt-32 pb-20 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column */}
-            <div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Smart <br />
-                <span className="text-blue-600">Management</span>
-              </h1>
-              <p className="text-xl text-gray-600 mt-4">Property Management</p>
-              <p className="text-gray-500 mt-2 max-w-lg">
-                The all-in-one property management platform for landlords,
-                property managers, and tenants. Streamline your operations with
-                ease.
-              </p>
-              <div className="flex flex-wrap gap-4 mt-8">
-                <Link
-                  to="/register"
-                  className="px-8 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition shadow-lg shadow-blue-600/25 flex items-center space-x-2"
-                >
-                  <span>Get Started Free</span>
-                  <ArrowRightIcon className="w-4 h-4" />
-                </Link>
-                <Link
-                  to="/features"
-                  className="px-8 py-3 bg-white text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition shadow-sm border border-gray-200"
-                >
-                  LEARN MORE
-                </Link>
+      <section className="relative min-h-[92vh] overflow-hidden">
+        <img
+          src={coverImage}
+          alt="Modern property management workspace"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="absolute inset-0 bg-[#0f172a]/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_25%,rgba(214,183,125,0.25),transparent_22rem),radial-gradient(circle_at_80%_10%,rgba(16,185,129,0.22),transparent_24rem)]" />
+
+        <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-end px-4 pb-10 pt-28 sm:px-6 lg:px-8">
+          <div className="max-w-4xl pb-10">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase text-[#d6b77d] backdrop-blur">
+              <ShieldCheckIcon className="h-4 w-4" />
+              Property operations platform
+            </div>
+            <h1 className="mt-5 max-w-3xl text-4xl font-black tracking-normal sm:text-6xl lg:text-7xl">
+              EstateFlow Property Management
+            </h1>
+            <p className="mt-5 max-w-2xl text-base leading-7 text-slate-200 sm:text-lg">
+              Manage assets, tenants, leases, payments, maintenance, and reports
+              through a clean system built for busy property teams.
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+              <Link
+                to="/register"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#d6b77d] px-5 py-3 text-sm font-black text-[#0f172a] shadow-xl shadow-[#b98d46]/30 transition hover:-translate-y-0.5 hover:bg-[#c9a96d]"
+              >
+                Start Managing
+                <ArrowRightIcon className="h-5 w-5" />
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-bold text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/15"
+              >
+                Sign In
+              </Link>
+            </div>
+          </div>
+
+          <div className="grid gap-3 rounded-2xl border border-white/15 bg-white/10 p-3 backdrop-blur-xl sm:grid-cols-3">
+            {[
+              ["50+", "Managed assets"],
+              ["15+", "Active contracts"],
+              ["24/7", "Operational visibility"],
+            ].map(([value, label]) => (
+              <div key={label} className="rounded-xl bg-white/10 p-4">
+                <p className="text-2xl font-black">{value}</p>
+                <p className="mt-1 text-sm font-medium text-slate-300">
+                  {label}
+                </p>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ========== STATS SECTION ========== */}
-      <section className="py-16 bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div>
-              <p className="text-4xl font-bold text-blue-600">50+</p>
-              <p className="text-sm text-gray-500 mt-1">Properties</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-blue-600">20+</p>
-              <p className="text-sm text-gray-500 mt-1">Active Clients</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-blue-600">15+</p>
-              <p className="text-sm text-gray-500 mt-1">Contracts</p>
-            </div>
-            <div>
-              <p className="text-4xl font-bold text-blue-600">10+</p>
-              <p className="text-sm text-gray-500 mt-1">Transactions</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== FEATURES SECTION ========== */}
-      <section id="features" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Why Choose PROPERTYMANAGER?
+      <section id="features" className="bg-[#fffdfb] py-20 text-slate-950">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-bold uppercase text-[#8a6730]">
+              Daily workflow
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-normal sm:text-4xl">
+              Everything your team checks first, designed to be readable.
             </h2>
-            <p className="text-gray-500 mt-2 max-w-2xl mx-auto">
-              Everything you need to manage your properties efficiently in one
-              powerful platform.
+          </div>
+          <div className="mt-10 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {features.map((feature) => (
+              <div
+                key={feature.title}
+                className="rounded-2xl border border-[#eae0d0] bg-white p-6 shadow-xl shadow-[#b98d46]/10"
+              >
+                <div
+                  className={`flex h-12 w-12 items-center justify-center rounded-xl ${feature.tone}`}
+                >
+                  <feature.icon className="h-6 w-6" />
+                </div>
+                <h3 className="mt-5 text-lg font-black">{feature.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  {feature.copy}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="insights" className="bg-white py-20 text-slate-950">
+        <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:px-8">
+          <div>
+            <p className="text-sm font-bold uppercase text-[#8a6730]">
+              Better decisions
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-normal">
+              See the health of the business before opening a spreadsheet.
+            </h2>
+            <p className="mt-4 text-sm leading-6 text-slate-600">
+              The dashboard brings together revenue, contracts, maintenance, and
+              audit activity so managers can move quickly with context.
             </p>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4">
-                <BuildingOffice2Icon className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Property Management
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Manage all your properties, track status, and monitor
-                performance from a single dashboard.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4">
-                <DocumentTextIcon className="w-6 h-6 text-green-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Contract Management
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Create, sign, and track rental agreements with automated PDF
-                generation and reminders.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4">
-                <ChartBarIcon className="w-6 h-6 text-purple-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Analytics & Reports
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Get real-time insights with revenue reports, occupancy
-                analytics, and financial summaries.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-yellow-50 rounded-xl flex items-center justify-center mb-4">
-                <UserGroupIcon className="w-6 h-6 text-yellow-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                User Management
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Role-based access for admins, property managers, tenants,
-                landlords, and accountants.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-red-50 rounded-xl flex items-center justify-center mb-4">
-                <ShieldCheckIcon className="w-6 h-6 text-red-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                Security & Compliance
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Enterprise-grade security with JWT authentication, audit logs,
-                and role-based permissions.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm p-8 border border-gray-100 hover:shadow-md transition">
-              <div className="w-12 h-12 bg-indigo-50 rounded-xl flex items-center justify-center mb-4">
-                <ClockIcon className="w-6 h-6 text-indigo-600" />
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900">
-                24/7 Support
-              </h3>
-              <p className="text-gray-500 text-sm mt-2">
-                Dedicated support team available around the clock to help you
-                with any issues.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== CTA SECTION ========== */}
-      <section className="py-20 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-white">
-            Ready to Get Started?
-          </h2>
-          <p className="text-blue-100 mt-4 max-w-2xl mx-auto">
-            Join thousands of property managers who trust PROPERTYMANAGER to
-            streamline their operations.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4 mt-8">
-            <Link
-              to="/register"
-              className="px-8 py-3 bg-white text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition shadow-lg"
-            >
-              Get Started Free
-            </Link>
-            <Link
-              to="/login"
-              className="px-8 py-3 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-400 transition border border-blue-400"
-            >
-              Sign In
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ========== FOOTER ========== */}
-      <footer className="bg-gray-900 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <BuildingOffice2Icon className="w-6 h-6 text-blue-500" />
-                <span className="text-lg font-bold text-white">
-                  PROPERTYMANAGER
+          <div className="grid gap-4 sm:grid-cols-2">
+            {[
+              ["Revenue reports", ChartBarIcon],
+              ["Audit history", ClipboardDocumentListIcon],
+              ["Secure access", ShieldCheckIcon],
+              ["Clear tasks", CheckCircleIcon],
+            ].map(([label, Icon]) => (
+              <div
+                key={label as string}
+                className="flex items-center gap-3 rounded-2xl border border-[#eae0d0] bg-[#f9f1e2] p-4"
+              >
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0f172a] text-[#d6b77d]">
+                  <Icon className="h-5 w-5" />
                 </span>
+                <span className="text-sm font-bold">{label as string}</span>
               </div>
-              <p className="text-sm">
-                The all-in-one property management platform.
-              </p>
-              <p className="text-sm mt-2">
-                © 2026 PROPERTYMANAGER. All rights reserved.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3">Product</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/features" className="hover:text-white transition">
-                    Features
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/pricing" className="hover:text-white transition">
-                    Pricing
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/demo" className="hover:text-white transition">
-                    Demo
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3">Company</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/about" className="hover:text-white transition">
-                    About Us
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/careers" className="hover:text-white transition">
-                    Careers
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-white transition">
-                    Contact
-                  </Link>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-white font-semibold mb-3">Support</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/help" className="hover:text-white transition">
-                    Help Center
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/docs" className="hover:text-white transition">
-                    Documentation
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/status" className="hover:text-white transition">
-                    Status
-                  </Link>
-                </li>
-              </ul>
-            </div>
+            ))}
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section id="security" className="bg-[#0f172a] py-16">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 px-4 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div>
+            <h2 className="text-3xl font-black tracking-normal text-white">
+              Ready to run your property operations from one place?
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
+              Create a tenant account or sign in to your workspace to continue.
+            </p>
+          </div>
+          <Link
+            to="/register"
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-black text-[#0f172a] transition hover:bg-[#f9f1e2]"
+          >
+            Create Account
+            <ArrowRightIcon className="h-5 w-5" />
+          </Link>
+        </div>
+      </section>
     </div>
   );
 }
