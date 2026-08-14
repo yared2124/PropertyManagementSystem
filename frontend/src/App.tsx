@@ -40,6 +40,7 @@ import Rentals from "./pages/Rentals";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import AuditLogs from "./pages/AuditLogs";
+import UserForm from "./pages/UserForm";
 
 function App() {
   return (
@@ -97,7 +98,9 @@ function App() {
               <Route
                 path="/maintenance"
                 element={
-                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.maintenanceView}>
+                  <ProtectedRoute
+                    requiredRole={PRIVILEGE_ROLES.maintenanceView}
+                  >
                     <Maintenance />
                   </ProtectedRoute>
                 }
@@ -107,9 +110,7 @@ function App() {
               <Route
                 path="/properties"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.propertiesView}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.propertiesView}>
                     <Properties />
                   </ProtectedRoute>
                 }
@@ -127,9 +128,7 @@ function App() {
               <Route
                 path="/properties/:id"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.propertiesView}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.propertiesView}>
                     <PropertyDetail />
                   </ProtectedRoute>
                 }
@@ -149,9 +148,7 @@ function App() {
               <Route
                 path="/vehicles"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.vehiclesView}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.vehiclesView}>
                     <Vehicles />
                   </ProtectedRoute>
                 }
@@ -159,9 +156,7 @@ function App() {
               <Route
                 path="/vehicles/new"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.vehiclesManage}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.vehiclesManage}>
                     <VehicleForm />
                   </ProtectedRoute>
                 }
@@ -169,9 +164,7 @@ function App() {
               <Route
                 path="/vehicles/:id/edit"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.vehiclesManage}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.vehiclesManage}>
                     <VehicleForm />
                   </ProtectedRoute>
                 }
@@ -269,9 +262,7 @@ function App() {
               <Route
                 path="/poa"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.poaView}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.poaView}>
                     <POA />
                   </ProtectedRoute>
                 }
@@ -279,9 +270,7 @@ function App() {
               <Route
                 path="/poa/new"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.poaManage}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.poaManage}>
                     <POAForm />
                   </ProtectedRoute>
                 }
@@ -289,9 +278,7 @@ function App() {
               <Route
                 path="/poa/:id/edit"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.poaManage}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.poaManage}>
                     <POAForm />
                   </ProtectedRoute>
                 }
@@ -317,7 +304,9 @@ function App() {
               <Route
                 path="/attendances"
                 element={
-                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.attendancesView}>
+                  <ProtectedRoute
+                    requiredRole={PRIVILEGE_ROLES.attendancesView}
+                  >
                     <Attendances />
                   </ProtectedRoute>
                 }
@@ -332,6 +321,8 @@ function App() {
                   </ProtectedRoute>
                 }
               />
+              <Route path="/users/new" element={<UserForm />} />
+              <Route path="/users/:id/edit" element={<UserForm />} />
 
               {/* ----- Audit Logs (Admin only) ----- */}
               <Route
@@ -357,9 +348,7 @@ function App() {
               <Route
                 path="/lands"
                 element={
-                  <ProtectedRoute
-                    requiredRole={PRIVILEGE_ROLES.propertiesView}
-                  >
+                  <ProtectedRoute requiredRole={PRIVILEGE_ROLES.propertiesView}>
                     <Lands />
                   </ProtectedRoute>
                 }
