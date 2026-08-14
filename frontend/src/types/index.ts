@@ -4,6 +4,7 @@ export interface User {
   email: string;
   firstName: string;
   lastName: string;
+  isActive?: boolean;
   role:
     | "SYSTEM_ADMIN"
     | "PROPERTY_MANAGER"
@@ -93,6 +94,17 @@ export interface Maintenance {
   assetType: "PROPERTY" | "VEHICLE" | "LAND";
   assetId: string;
   estimatedCost?: number;
+}
+
+// === Inspection ===
+export interface Inspection {
+  id: string;
+  type: string;
+  inspectionDate: string;
+  condition?: string;
+  status: string;
+  inspectorId: string;
+  notes?: string;
 }
 
 // === POA ===
