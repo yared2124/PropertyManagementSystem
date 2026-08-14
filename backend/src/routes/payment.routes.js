@@ -20,17 +20,37 @@ router.post(
 // --- Process a payment (manual) ---
 router.post(
   "/",
-  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "ACCOUNTANT"]),
+  requireRole(["SYSTEM_ADMIN", "ACCOUNTANT"]),
   validate(paymentSchema),
   auditLog("CREATE"),
   paymentController.process,
 );
 
 // --- List payments ---
-router.get("/", paymentController.findAll);
+router.get(
+  "/",
+  requireRole([
+    "SYSTEM_ADMIN",
+    "PROPERTY_MANAGER",
+    "TENANT",
+    "LANDLORD",
+    "ACCOUNTANT",
+  ]),
+  paymentController.findAll,
+);
 
 // --- Get payment by ID ---
-router.get("/:id", paymentController.findById);
+router.get(
+  "/:id",
+  requireRole([
+    "SYSTEM_ADMIN",
+    "PROPERTY_MANAGER",
+    "TENANT",
+    "LANDLORD",
+    "ACCOUNTANT",
+  ]),
+  paymentController.findById,
+);
 
 // --- Refund a payment ---
 router.post(
