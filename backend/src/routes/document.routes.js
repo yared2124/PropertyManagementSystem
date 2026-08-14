@@ -11,6 +11,10 @@ router.use(authenticate);
 router.post("/upload", uploadSingle("file"), documentController.upload);
 router.get("/", documentController.findAll);
 router.get("/:id", documentController.findById);
-router.delete("/:id", requireRole(["SYSTEM_ADMIN"]), documentController.delete);
+router.delete(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "LEGAL_ADMIN"]),
+  documentController.delete,
+);
 
 export default router;
