@@ -15,13 +15,25 @@ router.post(
   validate(poaSchema),
   poaController.create,
 );
-router.get("/", poaController.findAll);
-router.get("/:id", poaController.findById);
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LEGAL_ADMIN"]),
+  poaController.findAll,
+);
+router.get(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LEGAL_ADMIN"]),
+  poaController.findById,
+);
 router.put(
   "/:id",
   requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LEGAL_ADMIN"]),
   poaController.update,
 );
-router.delete("/:id", requireRole(["SYSTEM_ADMIN"]), poaController.delete);
+router.delete(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "LEGAL_ADMIN"]),
+  poaController.delete,
+);
 
 export default router;
