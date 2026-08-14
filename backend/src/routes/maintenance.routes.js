@@ -9,9 +9,22 @@ const router = express.Router();
 
 router.use(authenticate);
 
-router.post("/", validate(maintenanceSchema), maintenanceController.create);
-router.get("/", maintenanceController.findAll);
-router.get("/:id", maintenanceController.findById);
+router.post(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT"]),
+  validate(maintenanceSchema),
+  maintenanceController.create,
+);
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  maintenanceController.findAll,
+);
+router.get(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  maintenanceController.findById,
+);
 router.put(
   "/:id/status",
   requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
@@ -19,7 +32,7 @@ router.put(
 );
 router.delete(
   "/:id",
-  requireRole(["SYSTEM_ADMIN"]),
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   maintenanceController.delete,
 );
 
