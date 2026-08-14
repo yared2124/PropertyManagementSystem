@@ -28,12 +28,20 @@ router.post(
 // ============================================
 // List properties (with optional filters)
 // ============================================
-router.get("/", propertyController.findAll);
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  propertyController.findAll,
+);
 
 // ============================================
 // Get a single property by ID
 // ============================================
-router.get("/:id", propertyController.findById);
+router.get(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  propertyController.findById,
+);
 
 // ============================================
 // Update a property
@@ -50,7 +58,7 @@ router.put(
 // ============================================
 router.delete(
   "/:id",
-  requireRole(["SYSTEM_ADMIN"]),
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   auditLog("DELETE"), // ✅ log delete action
   propertyController.delete,
 );
@@ -60,6 +68,7 @@ router.delete(
 // ============================================
 router.post(
   "/:id/images",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   uploadSingle("image"),
   auditLog("UPLOAD_IMAGE"), // ✅ log image upload
   propertyController.uploadImage,
@@ -68,6 +77,10 @@ router.post(
 // ============================================
 // (Optional) Get all images for a property
 // ============================================
-router.get("/:id/images", propertyController.getImages);
+router.get(
+  "/:id/images",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  propertyController.getImages,
+);
 
 export default router;
