@@ -20,10 +20,18 @@ router.post(
 );
 
 // --- List vehicles ---
-router.get("/", vehicleController.findAll);
+router.get(
+  "/",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  vehicleController.findAll,
+);
 
 // --- Get vehicle by ID ---
-router.get("/:id", vehicleController.findById);
+router.get(
+  "/:id",
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER", "TENANT", "LANDLORD"]),
+  vehicleController.findById,
+);
 
 // --- Update vehicle ---
 router.put(
@@ -36,7 +44,7 @@ router.put(
 // --- Delete vehicle ---
 router.delete(
   "/:id",
-  requireRole(["SYSTEM_ADMIN"]),
+  requireRole(["SYSTEM_ADMIN", "PROPERTY_MANAGER"]),
   auditLog("DELETE"),
   vehicleController.delete,
 );
