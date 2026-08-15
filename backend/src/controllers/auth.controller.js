@@ -4,6 +4,8 @@
 
 import authService from "../services/auth.service.js";
 import { successResponse } from "../utils/apiResponse.js";
+ // src/controllers/auth.controller.js
+import { verifyAccessToken } from '../utils/jwt.js';
 
 class AuthController {
   async register(req, res, next) {
@@ -36,6 +38,41 @@ class AuthController {
       next(error);
     }
   }
+
+ 
+
+async verifyEmail(req, res, next) {
+  try {
+    const { token } = req.query;
+    if (!token) {
+      throw new AppError('Verification token is required', 400);
+    }
+
+    // Verify token
+    let decoded;
+    try {
+      decoded = verifyAccessToken(token); // reuse your JWT verify
+    } catch (error) {
+      throw new AppError('Invalid or expired token', 400);
+    }
+
+    // Find user and update emailVerified
+    const user = await userRepository.findById(decoded.userId);
+    if (!user) {
+      throw new AppError('User not found', 404);
+    }
+
+    if (user.emailVerified) {
+      return res.status(200).json({ success: true, message: 'Email already verified' });
+    }
+
+    await userRepository.update(user.id, { emailVerified: true });
+
+    res.status(200).json({ success: true, message: 'Email verified successfully' });
+  } catch (error) {
+    next(error);
+  }
+}
 
   async logout(req, res, next) {
     try {
