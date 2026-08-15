@@ -146,317 +146,386 @@ export default function PropertyForm() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6">
-      {/* ===== Form Card ===== */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">
-            {id ? "Edit Property" : "Add New Property"}
-          </h1>
-          <button
-            type="button"
-            onClick={() => navigate("/properties")}
-            className="text-sm text-gray-500 hover:text-gray-700"
-          >
-            Cancel
-          </button>
+    <div className="mx-auto max-w-6xl space-y-6 pb-10">
+      <div className="overflow-hidden rounded-[28px] border border-[#e8dfd1] bg-gradient-to-br from-[#f8f5f0] via-white to-[#f3efe8] shadow-[0_25px_60px_rgba(15,23,42,0.08)]">
+        <div className="border-b border-[#e9e0d0] bg-gradient-to-r from-[#0f172a] via-[#182334] to-[#1a2d3f] px-6 py-6 text-white md:px-8">
+          <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-[#d6b77d]">
+                Premium portfolio
+              </p>
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-white md:text-3xl">
+                {id ? "Edit Property" : "Add New Property"}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <span className="rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-xs font-medium text-[#f5e7c3] backdrop-blur-sm">
+                Luxury listing
+              </span>
+              <button
+                type="button"
+                onClick={() => navigate("/properties")}
+                className="rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          {/* ===== SECTION: Basic Information ===== */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Basic Information
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Title <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("title")}
-                  className="input-field"
-                  placeholder="e.g., Luxury Apartment Downtown"
-                />
-                {errors.title && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.title.message}
-                  </p>
-                )}
+        <div className="p-5 md:p-8">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="rounded-2xl border border-[#eae0d0] bg-[#fffdf9] p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.06)]">
+              <div className="mb-5 flex items-center justify-between gap-3 border-b border-[#efe7dc] pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f2e4c7] text-sm font-semibold text-[#8a6730]">
+                    01
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-[#8a6730]">
+                      Property profile
+                    </p>
+                    <h2 className="mt-1 text-lg font-semibold text-slate-900">
+                      Basic information
+                    </h2>
+                  </div>
+                </div>
+                <span className="rounded-full border border-[#d9c29c] bg-[#f9f1e2] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8a6730]">
+                  Required
+                </span>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Asset Type <span className="text-red-500">*</span>
-                </label>
-                <select {...register("assetType")} className="input-field">
-                  <option value="APARTMENT">Apartment</option>
-                  <option value="OFFICE">Office</option>
-                  <option value="VILLA">Villa</option>
-                  <option value="WAREHOUSE">Warehouse</option>
-                  <option value="LAND">Land</option>
-                  <option value="COMMERCIAL_SPACE">Commercial Space</option>
-                  <option value="RESIDENTIAL_COMPLEX">
-                    Residential Complex
-                  </option>
-                </select>
-                {errors.assetType && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.assetType.message}
-                  </p>
-                )}
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Title <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("title")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., Luxury Apartment Downtown"
+                  />
+                  {errors.title && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.title.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Asset Type <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    {...register("assetType")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                  >
+                    <option value="APARTMENT">Apartment</option>
+                    <option value="OFFICE">Office</option>
+                    <option value="VILLA">Villa</option>
+                    <option value="WAREHOUSE">Warehouse</option>
+                    <option value="LAND">Land</option>
+                    <option value="COMMERCIAL_SPACE">Commercial Space</option>
+                    <option value="RESIDENTIAL_COMPLEX">
+                      Residential Complex
+                    </option>
+                  </select>
+                  {errors.assetType && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.assetType.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Status
+                  </label>
+                  <select
+                    {...register("status")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                  >
+                    <option value="AVAILABLE">Available</option>
+                    <option value="RENTED">Rented</option>
+                    <option value="UNDER_MAINTENANCE">Under Maintenance</option>
+                  </select>
+                </div>
               </div>
             </div>
-          </section>
 
-          {/* ===== SECTION: Location ===== */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Location
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("address")}
-                  className="input-field"
-                  placeholder="Street, building number"
-                />
-                {errors.address && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.address.message}
-                  </p>
-                )}
+            <div className="rounded-2xl border border-[#eae0d0] bg-white p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.05)]">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e8ecf8] text-sm font-semibold text-[#3e4c7a]">
+                  02
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Location
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  City <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("city")}
-                  className="input-field"
-                  placeholder="e.g., Riyadh"
-                />
-                {errors.city && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.city.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  District
-                </label>
-                <input
-                  {...register("district")}
-                  className="input-field"
-                  placeholder="Optional"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Neighborhood
-                </label>
-                <input
-                  {...register("neighborhood")}
-                  className="input-field"
-                  placeholder="Optional"
-                />
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Address <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("address")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="Street, building number"
+                  />
+                  {errors.address && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.address.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("city")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., Riyadh"
+                  />
+                  {errors.city && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.city.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    District
+                  </label>
+                  <input
+                    {...register("district")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="Optional"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Neighborhood
+                  </label>
+                  <input
+                    {...register("neighborhood")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="Optional"
+                  />
+                </div>
               </div>
             </div>
-          </section>
 
-          {/* ===== SECTION: Property Details ===== */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Property Details
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Area (m²) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("area", { valueAsNumber: true })}
-                  type="number"
-                  className="input-field"
-                  placeholder="e.g., 120"
-                />
-                {errors.area && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.area.message}
-                  </p>
-                )}
+            <div className="rounded-2xl border border-[#eae0d0] bg-white p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.05)]">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e6f5ee] text-sm font-semibold text-[#2f6b56]">
+                  03
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Property details
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bedrooms
-                </label>
-                <input
-                  {...register("bedrooms", { valueAsNumber: true })}
-                  type="number"
-                  className="input-field"
-                  placeholder="e.g., 3"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Bathrooms
-                </label>
-                <input
-                  {...register("bathrooms", { valueAsNumber: true })}
-                  type="number"
-                  step="0.5"
-                  className="input-field"
-                  placeholder="e.g., 2"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Year Built
-                </label>
-                <input
-                  {...register("yearBuilt", { valueAsNumber: true })}
-                  type="number"
-                  className="input-field"
-                  placeholder="e.g., 2020"
-                />
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Area (m²) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("area", { valueAsNumber: true })}
+                    type="number"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 120"
+                  />
+                  {errors.area && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.area.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Bedrooms
+                  </label>
+                  <input
+                    {...register("bedrooms", { valueAsNumber: true })}
+                    type="number"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 3"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Bathrooms
+                  </label>
+                  <input
+                    {...register("bathrooms", { valueAsNumber: true })}
+                    type="number"
+                    step="0.5"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 2"
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Year Built
+                  </label>
+                  <input
+                    {...register("yearBuilt", { valueAsNumber: true })}
+                    type="number"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 2020"
+                  />
+                </div>
               </div>
             </div>
-          </section>
 
-          {/* ===== SECTION: Financials ===== */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Financials
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Market Value (SAR) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("marketValue", { valueAsNumber: true })}
-                  type="number"
-                  className="input-field"
-                  placeholder="e.g., 750000"
-                />
-                {errors.marketValue && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.marketValue.message}
-                  </p>
-                )}
+            <div className="rounded-2xl border border-[#eae0d0] bg-white p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.05)]">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f9eed7] text-sm font-semibold text-[#8f6a2c]">
+                  04
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Financials
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rental Rate (SAR) <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("rentalRate", { valueAsNumber: true })}
-                  type="number"
-                  className="input-field"
-                  placeholder="e.g., 4000"
-                />
-                {errors.rentalRate && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.rentalRate.message}
-                  </p>
-                )}
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Market Value (SAR) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("marketValue", { valueAsNumber: true })}
+                    type="number"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 750000"
+                  />
+                  {errors.marketValue && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.marketValue.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Rental Rate (SAR) <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("rentalRate", { valueAsNumber: true })}
+                    type="number"
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="e.g., 4000"
+                  />
+                  {errors.rentalRate && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.rentalRate.message}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </section>
 
-          {/* ===== SECTION: Status & Ownership ===== */}
-          <section>
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">
-              Status & Ownership
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
-                <select {...register("status")} className="input-field">
-                  <option value="AVAILABLE">Available</option>
-                  <option value="RENTED">Rented</option>
-                  <option value="UNDER_MAINTENANCE">Under Maintenance</option>
-                </select>
+            <div className="rounded-2xl border border-[#eae0d0] bg-white p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.05)]">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f7e4ef] text-sm font-semibold text-[#8e4f78]">
+                  05
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
+                  Ownership
+                </h2>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Owner ID <span className="text-red-500">*</span>
-                </label>
-                <input
-                  {...register("ownerId")}
-                  className="input-field"
-                  placeholder="UUID"
-                />
-                {errors.ownerId && (
-                  <p className="text-red-600 text-sm mt-1">
-                    {errors.ownerId.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Manager ID
-                </label>
-                <input
-                  {...register("managerId")}
-                  className="input-field"
-                  placeholder="UUID"
-                />
+
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-3">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Owner ID <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    {...register("ownerId")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="UUID"
+                  />
+                  {errors.ownerId && (
+                    <p className="mt-2 text-sm text-red-600">
+                      {errors.ownerId.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-slate-700">
+                    Manager ID
+                  </label>
+                  <input
+                    {...register("managerId")}
+                    className="h-12 w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="UUID"
+                  />
+                </div>
+
+                <div className="flex items-end">
+                  <label className="flex w-full cursor-pointer items-center justify-between rounded-xl border border-[#e7dcc8] bg-[#faf5ee] px-4 py-3 text-sm font-medium text-slate-700 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition hover:border-[#d7c3a0]">
+                    <span>Furnished</span>
+                    <input
+                      {...register("furnished")}
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-[#d7c3a0] text-[#b98d46] focus:ring-[#d9be85]"
+                    />
+                  </label>
+                </div>
               </div>
             </div>
-          </section>
 
-          {/* ===== SECTION: Description & Furnished ===== */}
-          <section>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
+            <div className="rounded-2xl border border-[#eae0d0] bg-white p-5 md:p-6 shadow-[0_8px_24px_rgba(148,117,64,0.05)]">
+              <div className="mb-5 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e0f1ff] text-sm font-semibold text-[#345d82]">
+                  06
+                </div>
+                <h2 className="text-lg font-semibold text-slate-900">
                   Description
-                </label>
-                <textarea
-                  {...register("description")}
-                  rows={4}
-                  className="input-field"
-                  placeholder="Describe the property..."
-                />
+                </h2>
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  {...register("furnished")}
-                  type="checkbox"
-                  id="furnished"
-                  className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-                />
-                <label htmlFor="furnished" className="text-sm text-gray-700">
-                  Furnished
-                </label>
-              </div>
-            </div>
-          </section>
 
-          {/* ===== FORM ACTIONS ===== */}
-          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-gray-200">
-            <button
-              type="button"
-              onClick={() => navigate("/properties")}
-              className="btn-secondary"
-            >
-              Cancel
-            </button>
-            <button type="submit" disabled={loading} className="btn-primary">
-              {loading
-                ? "Saving..."
-                : id
-                  ? "Update Property"
-                  : "Create Property"}
-            </button>
-          </div>
-        </form>
+              <textarea
+                {...register("description")}
+                rows={5}
+                className="min-h-[140px] w-full rounded-2xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm text-slate-800 shadow-[0_2px_8px_rgba(15,23,42,0.02)] transition focus:border-[#c9a96d] focus:outline-none focus:ring-4 focus:ring-[#f4e9d5]"
+                placeholder="Describe the property, amenities, nearby attractions, and any special features..."
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-3 border-t border-[#eee2d0] pt-6">
+              <button
+                type="button"
+                onClick={() => navigate("/properties")}
+                className="rounded-xl border border-[#d9c7a2] bg-[#f9f5ef] px-5 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-[#f4ebdf]"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="rounded-xl bg-gradient-to-r from-[#0f172a] via-[#1b2c3d] to-[#b98d46] px-5 py-2.5 text-sm font-semibold text-white shadow-[0_12px_30px_rgba(24,32,48,0.25)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+              >
+                {loading
+                  ? "Saving..."
+                  : id
+                    ? "Update Property"
+                    : "Create Property"}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
 
       {/* ===== IMAGE UPLOAD SECTION (only when editing) ===== */}
