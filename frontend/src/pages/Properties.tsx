@@ -1,8 +1,22 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { PlusIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import {
+  ArrowRightIcon,
+  BuildingOffice2Icon,
+  MapPinIcon,
+  PlusIcon,
+} from "@heroicons/react/24/outline";
 import { Property } from "../types";
 import { StatusBadge } from "../components/common/StatusBadge";
+import {
+  EmptyState,
+  FilterSelect,
+  ActionLink,
+  LoadingState,
+  PageHeader,
+  Panel,
+  PrimaryLink,
+  SearchInput,
+} from "../components/common/Page";
 import api from "../api/client";
 
 export default function Properties() {
@@ -24,93 +38,111 @@ export default function Properties() {
       (filterStatus ? p.status === filterStatus : true),
   );
 
-  if (loading)
-    return (
-      <div className="flex justify-center items-center h-64">Loading...</div>
-    );
+  if (loading) return <LoadingState label="Loading properties..." />;
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Properties</h1>
-          <p className="text-gray-600">Manage your property portfolio</p>
-        </div>
-        <Link
-          to="/properties/new"
-          className="btn-primary flex items-center space-x-2"
-        >
-          <PlusIcon className="w-5 h-5" />
-          <span>Add Property</span>
-        </Link>
-      </div>
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
+      <PageHeader
+        eyebrow="Assets"
+        title="Properties"
+        description="Manage your property portfolio, rent status, values, and locations."
+        action={
+          <PrimaryLink to="/properties/new">
+            <PlusIcon className="h-5 w-5" />
+            <span>Add Property</span>
+          </PrimaryLink>
+        }
+      />
+
+      <Panel className="p-4">
+        <div className="flex flex-col gap-4 md:flex-row">
+          <SearchInput
             placeholder="Search properties..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            onChange={setSearch}
           />
+          <FilterSelect value={filterStatus} onChange={setFilterStatus}>
+            <option value="">All Status</option>
+            <option value="AVAILABLE">Available</option>
+            <option value="RENTED">Rented</option>
+            <option value="UNDER_MAINTENANCE">Under Maintenance</option>
+          </FilterSelect>
         </div>
-        <select
-          value={filterStatus}
-          onChange={(e) => setFilterStatus(e.target.value)}
-          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Status</option>
-          <option value="AVAILABLE">Available</option>
-          <option value="RENTED">Rented</option>
-          <option value="UNDER_MAINTENANCE">Under Maintenance</option>
-        </select>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filtered.map((property) => (
-          <div
-            key={property.id}
-            className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition"
-          >
-            <div className="p-4">
-              <div className="flex justify-between items-start">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  {property.title}
-                </h3>
-                <StatusBadge status={property.status} />
-              </div>
-              <p className="text-sm text-gray-500 mt-1">{property.address}</p>
-              <div className="mt-3 flex items-center space-x-4 text-sm text-gray-600">
-                <span>{property.area} m²</span>
-                <span>•</span>
-                <span>{property.bedrooms || 0} beds</span>
-                <span>•</span>
-                <span>{property.bathrooms || 0} baths</span>
-              </div>
-              <div className="mt-3 pt-3 border-t border-gray-100 flex justify-between">
-                <div>
-                  <p className="text-xs text-gray-500">Rent</p>
-                  <p className="font-semibold text-gray-900">
-                    SAR {property.rentalRate.toLocaleString()}
-                  </p>
+      </Panel>
+
+      {filtered.length === 0 ? (
+        <Panel className="p-5">
+          <EmptyState
+            title="No properties found"
+            description="Try changing your search or add a new property."
+          />
+        </Panel>
+      ) : (
+        <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((property) => (
+            <Panel
+              key={property.id}
+              className="group overflow-hidden transition hover:-translate-y-1 hover:shadow-[0_24px_50px_rgba(148,117,64,0.15)]"
+            >
+              <div className="h-2 bg-gradient-to-r from-[#0f172a] via-[#1b2c3d] to-[#d6b77d]" />
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-xl bg-[#f9f1e2] text-[#8a6730]">
+                      <BuildingOffice2Icon className="h-6 w-6" />
+                    </div>
+                    <h3 className="truncate text-lg font-black text-slate-950">
+                      {property.title}
+                    </h3>
+                    <p className="mt-2 flex items-center gap-1.5 text-sm font-medium text-slate-500">
+                      <MapPinIcon className="h-4 w-4 shrink-0 text-[#8a6730]" />
+                      <span className="truncate">{property.address}</span>
+                    </p>
+                  </div>
+                  <StatusBadge status={property.status} />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500">Value</p>
-                  <p className="font-semibold text-gray-900">
-                    SAR {property.marketValue.toLocaleString()}
-                  </p>
+
+                <div className="mt-5 grid grid-cols-3 gap-3 rounded-xl bg-[#f9f1e2] p-3 text-sm">
+                  <div>
+                    <p className="text-xs font-bold text-[#8a6730]">Area</p>
+                    <p className="mt-1 font-black text-slate-900">
+                      {property.area} m2
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#8a6730]">Beds</p>
+                    <p className="mt-1 font-black text-slate-900">
+                      {property.bedrooms || 0}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-[#8a6730]">Baths</p>
+                    <p className="mt-1 font-black text-slate-900">
+                      {property.bathrooms || 0}
+                    </p>
+                  </div>
                 </div>
-                <Link
-                  to={`/properties/${property.id}`}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                >
-                  View →
-                </Link>
+
+                <div className="mt-5 flex items-end justify-between border-t border-[#eae0d0] pt-4">
+                  <div>
+                    <p className="text-xs font-bold text-slate-400">Rent</p>
+                    <p className="mt-1 text-base font-black text-slate-950">
+                      SAR {property.rentalRate.toLocaleString()}
+                    </p>
+                    <p className="mt-1 text-xs font-semibold text-slate-500">
+                      Value SAR {property.marketValue.toLocaleString()}
+                    </p>
+                  </div>
+                  <ActionLink to={`/properties/${property.id}`} tone="gold">
+                    View
+                    <ArrowRightIcon className="h-4 w-4" />
+                  </ActionLink>
+                </div>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            </Panel>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
