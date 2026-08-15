@@ -1,8 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BuildingOffice2Icon } from "@heroicons/react/24/outline";
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  BuildingOffice2Icon,
+  CheckCircleIcon,
+  ShieldCheckIcon,
+} from "@heroicons/react/24/outline";
 import api from "../api/client";
-
 import coverImage from "../assets/cover.png";
 
 export default function Register() {
@@ -42,217 +47,202 @@ export default function Register() {
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      {/* Navigation */}
-      <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-100 z-10 flex-shrink-0">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link to="/" className="flex items-center space-x-2">
-              <BuildingOffice2Icon className="w-8 h-8 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">
-                PROPERTYMANAGER
-              </span>
-            </Link>
-            <div className="hidden md:flex items-center space-x-8">
+    <div className="min-h-screen bg-[#0f172a] text-slate-950">
+      <div className="grid min-h-screen lg:grid-cols-[0.95fr_1.05fr]">
+        <section className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(214,183,125,0.12),transparent_22rem),linear-gradient(135deg,#f8f5f0_0%,#f3efe8_50%,#f7f3ee_100%)] px-4 py-8 sm:px-6">
+          <div className="w-full max-w-xl">
+            <div className="mb-8 flex items-center justify-between">
               <Link
                 to="/"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
+                className="inline-flex items-center gap-2 text-sm font-bold text-slate-600 transition hover:text-[#8a6730]"
               >
+                <ArrowLeftIcon className="h-4 w-4" />
                 Home
               </Link>
               <Link
-                to="/features"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Features
-              </Link>
-              <Link
-                to="/about"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                About
-              </Link>
-              <Link
-                to="/service"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Service
-              </Link>
-              <Link
-                to="/contact"
-                className="text-sm font-medium text-gray-700 hover:text-blue-600 transition"
-              >
-                Contact
-              </Link>
-            </div>
-            <div className="flex items-center space-x-3">
-              <Link
                 to="/login"
-                className="px-4 py-2 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-lg transition"
+                className="rounded-xl border border-[#d9c7a2] bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-[#c9a96d] hover:text-[#8a6730]"
               >
-                LOGIN
-              </Link>
-              <Link
-                to="/register"
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg transition"
-              >
-                Get Started
+                Login
               </Link>
             </div>
-          </div>
-        </div>
-      </nav>
 
-      {/* Body */}
-      <div className="flex flex-1 overflow-hidden">
-        <div
-          className="hidden lg:block lg:w-1/2 bg-cover bg-center bg-no-repeat relative"
-          style={{ backgroundImage: `url(${coverImage})` }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="relative h-full flex flex-col items-center justify-center text-white p-8">
-            <BuildingOffice2Icon className="w-24 h-24 text-white/90" />
-            <h1 className="text-4xl font-bold mt-4">PROPERTYMANAGER</h1>
-            <p className="text-xl text-white/80 mt-2">
-              Smart Property Management
-            </p>
-            <p className="text-sm text-white/60 mt-8 max-w-sm text-center">
-              Manage your properties, contracts, and payments – all in one
-              place.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-blue-50 to-indigo-100 overflow-y-auto">
-          <div className="max-w-md w-full bg-white rounded-2xl shadow-2xl p-8">
-            <div className="text-center mb-8">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-600 rounded-2xl mb-4">
-                <BuildingOffice2Icon className="w-8 h-8 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                Create Account
-              </h1>
-              <p className="text-gray-500 mt-1">Join PROPERTYMANAGER</p>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-4 text-sm">
-                {error}
-              </div>
-            )}
-
-            <form
-              onSubmit={handleSubmit}
-              className="space-y-4"
-              autoComplete="off"
-            >
-              {/* ===== DUMMY FIELDS TO CONFUSE BROWSER AUTOFILL ===== */}
-              <div className="hidden">
-                <input type="text" name="fakeEmail" value="" readOnly />
-                <input type="password" name="fakePassword" value="" readOnly />
+            <div className="rounded-3xl border border-[#e8dfd1] bg-white/90 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.10)] backdrop-blur sm:p-8">
+              <div className="mb-8">
+                <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#0f172a] text-[#d6b77d]">
+                  <BuildingOffice2Icon className="h-7 w-7" />
+                </div>
+                <h1 className="text-3xl font-black tracking-normal text-slate-950">
+                  Create account
+                </h1>
+                <p className="mt-2 text-sm leading-6 text-slate-600">
+                  Start as a tenant and access your contracts, payments, and
+                  maintenance requests.
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              {error && (
+                <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+                  {error}
+                </div>
+              )}
+
+              <form
+                onSubmit={handleSubmit}
+                className="space-y-4"
+                autoComplete="off"
+              >
+                <div className="hidden">
+                  <input type="text" name="fakeEmail" value="" readOnly />
+                  <input
+                    type="password"
+                    name="fakePassword"
+                    value=""
+                    readOnly
+                  />
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                      First Name
+                    </label>
+                    <input
+                      type="text"
+                      value={form.firstName}
+                      onChange={(e) =>
+                        setForm({ ...form, firstName: e.target.value })
+                      }
+                      autoComplete="off"
+                      className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                      placeholder="John"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                      Last Name
+                    </label>
+                    <input
+                      type="text"
+                      value={form.lastName}
+                      onChange={(e) =>
+                        setForm({ ...form, lastName: e.target.value })
+                      }
+                      autoComplete="off"
+                      className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                      placeholder="Doe"
+                      required
+                    />
+                  </div>
+                </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    First Name
+                  <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                    Email Address
                   </label>
                   <input
-                    type="text"
-                    value={form.firstName}
+                    type="email"
+                    value={form.email}
                     onChange={(e) =>
-                      setForm({ ...form, firstName: e.target.value })
+                      setForm({ ...form, email: e.target.value })
                     }
                     autoComplete="off"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    placeholder="John"
+                    className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                    placeholder="you@example.com"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    value={form.lastName}
-                    onChange={(e) =>
-                      setForm({ ...form, lastName: e.target.value })
-                    }
-                    autoComplete="off"
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                    placeholder="Doe"
-                    required
-                  />
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      value={form.password}
+                      onChange={(e) =>
+                        setForm({ ...form, password: e.target.value })
+                      }
+                      autoComplete="new-password"
+                      className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                      placeholder="Minimum 6 characters"
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  <div>
+                    <label className="mb-1.5 block text-sm font-bold text-slate-700">
+                      Confirm Password
+                    </label>
+                    <input
+                      type="password"
+                      value={form.confirmPassword}
+                      onChange={(e) =>
+                        setForm({ ...form, confirmPassword: e.target.value })
+                      }
+                      autoComplete="new-password"
+                      className="w-full rounded-xl border border-[#e7dcc8] bg-[#fffdfb] px-4 py-3 text-sm font-semibold text-slate-900 outline-none transition focus:border-[#c9a96d] focus:bg-white focus:ring-4 focus:ring-[#f4e9d5]"
+                      placeholder="Confirm password"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  autoComplete="off"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  placeholder="you@example.com"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
-                  }
-                  autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  placeholder="Minimum 6 characters"
-                  required
-                  minLength={6}
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Confirm Password
-                </label>
-                <input
-                  type="password"
-                  value={form.confirmPassword}
-                  onChange={(e) =>
-                    setForm({ ...form, confirmPassword: e.target.value })
-                  }
-                  autoComplete="new-password"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
-                  placeholder="Confirm your password"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? "Creating account..." : "Create Account"}
-              </button>
-            </form>
-
-            <p className="text-center text-sm text-gray-600 mt-6">
-              Already have an account?{" "}
-              <Link
-                to="/login"
-                className="text-blue-600 hover:text-blue-800 font-medium"
-              >
-                Sign In
-              </Link>
-            </p>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#0f172a] px-4 py-3 text-sm font-black text-white shadow-[0_16px_36px_rgba(24,32,48,0.22)] transition hover:-translate-y-0.5 hover:bg-[#1b2c3d] disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {loading ? "Creating account..." : "Create Account"}
+                  <ArrowRightIcon className="h-5 w-5" />
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        </section>
+
+        <section className="relative hidden overflow-hidden lg:block">
+          <img
+            src={coverImage}
+            alt="Modern property management"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[#0f172a]/72" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(214,183,125,0.28),transparent_22rem),radial-gradient(circle_at_20%_75%,rgba(16,185,129,0.18),transparent_24rem)]" />
+          <div className="relative flex h-full flex-col justify-between p-10 text-white">
+            <Link to="/" className="flex items-center gap-3">
+              <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#d6b77d] to-[#8a6730] text-sm font-black text-[#0f172a]">
+                PM
+              </span>
+              <span className="text-lg font-black tracking-wide">
+                EstateFlow
+              </span>
+            </Link>
+
+            <div className="max-w-xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-bold uppercase text-[#f6e6bf] backdrop-blur">
+                <ShieldCheckIcon className="h-4 w-4" />
+                Tenant access
+              </div>
+              <h2 className="mt-5 text-5xl font-black tracking-normal">
+                A clear portal for every property relationship.
+              </h2>
+              <div className="mt-6 space-y-3">
+                {[
+                  "Track contract details",
+                  "View payment status",
+                  "Request maintenance",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-3">
+                    <CheckCircleIcon className="h-5 w-5 text-[#d6b77d]" />
+                    <span className="text-sm font-semibold text-slate-100">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );
