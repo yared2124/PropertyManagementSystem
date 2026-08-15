@@ -7,6 +7,10 @@
 import userRepository from "../repositories/user.repository.js";
 import { hashPassword, comparePassword } from "../utils/bcrypt.js";
 import { AppError } from "../middlewares/errorHandler.js";
+import { generateAccessToken } from "../utils/jwt.js";
+import { sendEmail } from "../utils/email.js";
+
+
 
 class UserService {
   // =============================================
@@ -19,6 +23,47 @@ class UserService {
    * @returns {Promise<Object>} User object without password.
    * @throws {AppError} If user not found.
    */
+
+  // Inside UserService class
+  async createUser(data, adminId = null) {
+    // 1. Check if email already exists
+    const existing = await userRepository.findByEmail(data.email);
+    if (existing) {
+      throw new AppError("Email already registered", 400);
+    }
+
+    // 2. Hash password
+    const hashedPassword = await hashPassword(data.password);
+
+    // 3. Create user with emailVerified = false
+    const user = await userRepository.create({
+      ...data,
+      password: hashedPassword,
+      emailVerified: false, // <-- must be false
+    });
+
+    // 4. Generate verification token (using your existing JWT helper)
+    const token = generateAccessToken(user.id, user.role);
+    // Note: generateAccessToken uses JWT_EXPIRES_IN; ensure it's long enough (e.g., 7d)
+
+    // 5. Build verification link
+    const link = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
+
+    // 6. Send email
+    await sendEmail(
+      user.email,
+      "Verify Your Email Address",
+      `<h1>Welcome to PropertyManager!</h1>
+     <p>Your account has been created. Please verify your email by clicking the link below:</p>
+     <a href="${link}">${link}</a>
+     <p>This link expires in 7 days.</p>`,
+    );
+
+    // 7. Return user (without password)
+    const { password, ...userWithoutPassword } = user;
+    return userWithoutPassword;
+  }
+
   async getProfile(userId) {
     const user = await userRepository.findById(userId);
     if (!user || user.deletedAt) {
