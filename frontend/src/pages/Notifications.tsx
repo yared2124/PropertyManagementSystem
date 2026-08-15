@@ -2,9 +2,25 @@ import { useState } from "react";
 import {
   BellIcon,
   CheckCircleIcon,
-  XCircleIcon,
   ClockIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { IconButton, PageHeader, Panel, SecondaryButton } from "../components/common/Page";
+
+const typeStyles = {
+  success: {
+    icon: CheckCircleIcon,
+    tone: "bg-emerald-50 text-emerald-700",
+  },
+  warning: {
+    icon: ClockIcon,
+    tone: "bg-amber-50 text-amber-700",
+  },
+  info: {
+    icon: BellIcon,
+    tone: "bg-cyan-50 text-cyan-700",
+  },
+};
 
 export default function Notifications() {
   const [notifications] = useState([
@@ -36,43 +52,52 @@ export default function Notifications() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Notifications</h1>
-          <p className="text-gray-600">Stay updated with recent activities</p>
-        </div>
-        <button className="btn-secondary">Mark All Read</button>
-      </div>
+      <PageHeader
+        eyebrow="Inbox"
+        title="Notifications"
+        description="Stay updated with payments, contracts, maintenance, and system activity."
+        action={<SecondaryButton>Mark All Read</SecondaryButton>}
+      />
 
       <div className="space-y-3">
-        {notifications.map((notif) => (
-          <div
-            key={notif.id}
-            className={`bg-white rounded-xl shadow-sm border p-4 ${!notif.read ? "border-blue-200 bg-blue-50/30" : "border-gray-100"}`}
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex items-start space-x-3">
-                {notif.type === "success" && (
-                  <CheckCircleIcon className="w-5 h-5 text-green-500 mt-1" />
-                )}
-                {notif.type === "warning" && (
-                  <ClockIcon className="w-5 h-5 text-yellow-500 mt-1" />
-                )}
-                {notif.type === "info" && (
-                  <BellIcon className="w-5 h-5 text-blue-500 mt-1" />
-                )}
-                <div>
-                  <h4 className="font-medium text-gray-900">{notif.title}</h4>
-                  <p className="text-sm text-gray-600 mt-1">{notif.message}</p>
-                  <p className="text-xs text-gray-400 mt-1">{notif.time}</p>
+        {notifications.map((notif) => {
+          const style = typeStyles[notif.type as keyof typeof typeStyles];
+          const Icon = style.icon;
+
+          return (
+            <Panel
+              key={notif.id}
+              className={`p-4 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-slate-300/70 ${
+                !notif.read ? "border-cyan-100 bg-cyan-50/40" : ""
+              }`}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 items-start gap-3">
+                  <div className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${style.tone}`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="font-black text-slate-950">{notif.title}</h4>
+                    <p className="mt-1 text-sm font-medium text-slate-600">
+                      {notif.message}
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-400">
+                      {notif.time}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  {!notif.read && (
+                    <span className="h-2.5 w-2.5 rounded-full bg-cyan-600" />
+                  )}
+                  <IconButton title="Dismiss notification" tone="slate">
+                    <XMarkIcon className="h-4 w-4" />
+                  </IconButton>
                 </div>
               </div>
-              {!notif.read && (
-                <span className="w-2 h-2 bg-blue-600 rounded-full"></span>
-              )}
-            </div>
-          </div>
-        ))}
+            </Panel>
+          );
+        })}
       </div>
     </div>
   );
