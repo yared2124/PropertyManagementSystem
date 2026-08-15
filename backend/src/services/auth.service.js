@@ -1,5 +1,6 @@
 /**
- * Authentication service – handles registration, login, token refresh, and logout.
+ * Authentication service – handles registration, login, token refresh, logout,
+ * and email verification.
  * Uses repositories and utility functions.
  * Throws AppError for business rule violations.
  */
@@ -9,9 +10,11 @@ import {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
+  verifyAccessToken, // needed for email verification
 } from "../utils/jwt.js";
 import userRepository from "../repositories/user.repository.js";
 import { AppError } from "../middlewares/errorHandler.js";
+import { sendEmail } from "../utils/email.js"; // ✅ import email utility
 
 class AuthService {
   /**
@@ -31,15 +34,38 @@ class AuthService {
     // Hash password
     const hashedPassword = await hashPassword(password);
 
-    // Create user
+    // Create user with emailVerified = false
     const user = await userRepository.create({
       email,
       password: hashedPassword,
       firstName,
       lastName,
       role: role || "TENANT",
+      emailVerified: false, // explicitly set
       ...rest,
     });
+
+    // Generate verification token
+    const verifyToken = generateAccessToken(user.id, user.role); // reusing JWT helper, but we could also use a short-lived token
+    // Note: we are using the same access token generator; it's fine, but for verification we can set a different expiry.
+    // For clarity, we'll override expiry by generating a new token with 7d expiry.
+    // Since generateAccessToken uses JWT_EXPIRES_IN from env, you may want to create a separate helper for verification tokens.
+    // For simplicity, we'll use the same function; ensure JWT_EXPIRES_IN is long enough (e.g., 7d)
+    // Alternatively, we can create a dedicated verify token helper, but we'll reuse.
+
+    // Build verification link
+    const verificationLink = `${process.env.FRONTEND_URL}/verify-email?token=${verifyToken}`;
+
+    // Send verification email
+    await sendEmail(
+      email,
+      "Verify Your Email Address",
+      `<h1>Welcome to PropertyManager!</h1>
+       <p>Please verify your email by clicking the link below:</p>
+       <a href="${verificationLink}">${verificationLink}</a>
+       <p>This link expires in 7 days.</p>
+       <p>If you did not create this account, please ignore this email.</p>`,
+    );
 
     // Remove password from output
     const { password: _, ...userWithoutPassword } = user;
@@ -63,6 +89,11 @@ class AuthService {
       throw new AppError("Invalid credentials", 401);
     }
 
+    // ✅ Check if email is verified
+    if (!user.emailVerified) {
+      throw new AppError("Please verify your email before logging in", 403);
+    }
+
     // Generate tokens
     const accessToken = generateAccessToken(user.id, user.role);
     const refreshToken = generateRefreshToken(user.id);
@@ -78,6 +109,39 @@ class AuthService {
       accessToken,
       refreshToken,
     };
+  }
+
+  /**
+   * Verify email using a token.
+   * @param {string} token - JWT token from verification email.
+   * @returns {Promise<Object>} Success message.
+   */
+  async verifyEmail(token) {
+    if (!token) {
+      throw new AppError("Verification token is required", 400);
+    }
+
+    // Verify the token
+    let decoded;
+    try {
+      decoded = verifyAccessToken(token); // reuses JWT secret
+    } catch (error) {
+      throw new AppError("Invalid or expired verification token", 400);
+    }
+
+    const user = await userRepository.findById(decoded.userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    if (user.emailVerified) {
+      return { message: "Email already verified" };
+    }
+
+    // Update user
+    await userRepository.update(user.id, { emailVerified: true });
+
+    return { message: "Email verified successfully" };
   }
 
   /**
