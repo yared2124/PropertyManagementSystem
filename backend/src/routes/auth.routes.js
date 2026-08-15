@@ -23,6 +23,9 @@ router.post(
   
   authController.refreshToken,
 );
+// in auth.routes.js
+router.get('/verify-email', authController.verifyEmail);
+
 router.post("/logout", authenticate, authController.logout);
 
 export default router;
