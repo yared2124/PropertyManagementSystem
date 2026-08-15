@@ -39,6 +39,7 @@ import Lands from "../pages/Lands";
 import Rentals from "../pages/Rentals";
 import Profile from "../pages/Profile";
 import Settings from "../pages/Settings";
+import UserForm from "../pages/UserForm";
 
 // ============================================
 // Route Definitions
@@ -108,6 +109,8 @@ export const routes = {
 
     // Admin
     { path: "/users", element: <Users /> },
+    <Route path="/users/new" element={<UserForm />} />
+<Route path="/users/:id/edit" element={<UserForm />} />
 
     // Other
     { path: "/calendar", element: <Calendar /> },
