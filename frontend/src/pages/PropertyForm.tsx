@@ -97,9 +97,19 @@ export default function PropertyForm() {
         await api.post("/properties", data);
       }
       navigate("/properties");
-    } catch (error) {
-      console.error("Failed to save property", error);
-      alert("Failed to save property. Please try again.");
+    } catch (error: any) {
+      console.error("Failed to save property:", error);
+      // Extract error message from backend response
+      let message = "Failed to save property. Please try again.";
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      } else if (error.response?.data?.errors) {
+        // If backend returns an array of validation errors
+        message = error.response.data.errors.join(", ");
+      } else if (error.message) {
+        message = error.message;
+      }
+      alert(`❌ ${message}`);
     } finally {
       setLoading(false);
     }
