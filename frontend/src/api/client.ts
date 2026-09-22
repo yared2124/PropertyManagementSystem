@@ -1,10 +1,15 @@
 import axios, { AxiosInstance, InternalAxiosRequestConfig } from "axios";
 
+// Use the env variable in production; fall back to localhost in development.
+// This ensures the URL is never "undefined/api/v1".
+const BASE_URL =
+  import.meta.env.VITE_API_URL?.trim() || "http://localhost:5000/api/v1";
+
 const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1",
+  baseURL: BASE_URL,
 });
 
-// Request interceptor
+// Request interceptor — attach access token to every request
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = localStorage.getItem("accessToken");
   if (token) {
@@ -13,7 +18,7 @@ api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   return config;
 });
 
-// Response interceptor (refresh token)
+// Response interceptor — auto-refresh access token on 401
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -23,14 +28,14 @@ api.interceptors.response.use(
       const refreshToken = localStorage.getItem("refreshToken");
       if (refreshToken) {
         try {
-          const { data } = await axios.post(
-            `${import.meta.env.VITE_API_URL}/auth/refresh-token`,
-            { refreshToken },
-          );
+          // Use BASE_URL (not import.meta.env directly) to avoid "undefined" prefix
+          const { data } = await axios.post(`${BASE_URL}/auth/refresh-token`, {
+            refreshToken,
+          });
           localStorage.setItem("accessToken", data.data.accessToken);
           originalRequest.headers.Authorization = `Bearer ${data.data.accessToken}`;
           return axios(originalRequest);
-        } catch (e) {
+        } catch {
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
           window.location.href = "/login";
@@ -44,3 +49,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+
