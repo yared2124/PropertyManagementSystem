@@ -1,20 +1,137 @@
-# 📚 Property Management System (PMS) – GitHub README
-
-```markdown
 # 🏢 Property Management System (PMS)
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Node.js](https://img.shields.io/badge/Node.js-18%2B-green.svg)
-![React](https://img.shields.io/badge/React-18-blue.svg)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)
-![Prisma](https://img.shields.io/badge/Prisma-7-2D3748.svg)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue.svg)
-![Tailwind](https://img.shields.io/badge/Tailwind-3.4-38B2AC.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+> **A production-ready, full-stack property management platform** built with React 19, Node.js/Express, PostgreSQL (Prisma 7), Redis, Socket.io, and Stripe.
 
-A comprehensive, production-ready **Property Management System** built with **Node.js**, **Express**, **PostgreSQL**, and **React** + **TypeScript**. Designed for property managers, landlords, tenants, and administrators to streamline property operations, contract management, payments, and maintenance.
+[![Node.js](https://img.shields.io/badge/Node.js-22-green.svg)](https://nodejs.org)
+[![React](https://img.shields.io/badge/React-19-61DAFB.svg?logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6-blue.svg?logo=typescript)](https://typescriptlang.org)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791.svg?logo=postgresql)](https://postgresql.org)
+[![Prisma](https://img.shields.io/badge/Prisma-7-2D3748.svg?logo=prisma)](https://prisma.io)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38B2AC.svg?logo=tailwindcss)](https://tailwindcss.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED.svg?logo=docker)](./docker-compose.yml)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+
+## 🔗 Live Demo
+
+| Service | URL |
+|---------|-----|
+| 🖥️ Frontend | *Coming soon — deploy to Vercel* |
+| ⚙️ Backend API | *Coming soon — deploy to Render* |
+| 📖 API Docs | `{BACKEND_URL}/api-docs` |
 
 ---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TB
+    subgraph "Client"
+        U[👤 User Browser]
+    end
+
+    subgraph "Frontend — Vercel"
+        F[React 19 + Vite SPA\nTailwind CSS · React Router\nSocket.io Client · Recharts]
+    end
+
+    subgraph "Backend — Render"
+        A[Express 5 API\nHelmet · CORS · JWT Auth\nSwagger · Morgan · Winston]
+        WH[Stripe Webhook\n/webhook]
+        CRON[Node-Cron Jobs\nMaintenance Reminders]
+        WS[Socket.io\nReal-time Events]
+    end
+
+    subgraph "Data Layer"
+        DB[(PostgreSQL 16\nNeon / Supabase)]
+        R[(Redis 7\nUpstash)]
+    end
+
+    subgraph "External Services"
+        ST[💳 Stripe\nPayments]
+        EM[📧 Nodemailer\nEmail Alerts]
+        UP[📁 File Uploads\n/uploads]
+    end
+
+    U -->|HTTPS| F
+    F -->|REST API\n/api/v1| A
+    F -->|WebSocket| WS
+    A --- WS
+    A <-->|Prisma ORM| DB
+    A <-->|Caching & Sessions| R
+    A --> CRON
+    A --> EM
+    WH -->|Stripe Events| A
+    ST --> WH
+    A --> UP
+```
+
+---
+
+## 🚀 Deployment Guide
+
+### Option A — One-Click Local Setup (Docker Compose)
+> Requires: [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed.
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/yared2124/PropertyManagementSystem.git
+cd PropertyManagementSystem
+
+# 2. Set up backend environment variables
+cp backend/.env.example backend/.env
+# Edit backend/.env and fill in your values (JWT secrets, email, Stripe, etc.)
+
+# 3. Start all services (PostgreSQL + Redis + Backend + Frontend)
+docker compose up --build
+
+# 4. (First time) Run database migrations in a separate terminal
+docker compose exec backend npm run db:deploy
+
+# 5. Open the app
+# Frontend → http://localhost:3000
+# Backend  → http://localhost:5000
+# API Docs → http://localhost:5000/api-docs
+```
+
+---
+
+### Option B — Free Cloud Deployment (Neon + Render + Vercel)
+
+#### Step 1️⃣ — Database: Neon (Free Managed PostgreSQL)
+1. Go to [neon.tech](https://neon.tech) → Create account → New project.
+2. Copy the **Connection String** (looks like `postgresql://user:pass@ep-xxx.neon.tech/dbname?sslmode=require`).
+3. Save it as `DATABASE_URL` in your Render backend environment variables.
+
+#### Step 2️⃣ — Redis: Upstash (Free Serverless Redis)
+1. Go to [console.upstash.com](https://console.upstash.com) → Create database.
+2. Copy the **REDIS_URL** (`rediss://default:xxx@xxx.upstash.io:6379`).
+3. Save it as `REDIS_URL` in your Render backend environment variables.
+
+#### Step 3️⃣ — Backend: Render (Free Web Service)
+1. Push this repo to your GitHub account.
+2. Go to [render.com](https://render.com) → **New** → **Blueprint** → connect your repo.
+3. Render auto-reads [`render.yaml`](./render.yaml) and creates the web service.
+4. Go to the service's **Environment** tab and fill in the `sync: false` secrets:
+   - `DATABASE_URL` (from Neon)
+   - `REDIS_URL` (from Upstash)
+   - `FRONTEND_URL` (your Vercel URL — fill after Step 4)
+   - `EMAIL_USER`, `EMAIL_PASS`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+5. Click **Deploy** → wait for build → note your backend URL (e.g., `https://pms-backend.onrender.com`).
+6. Trigger the first migration manually via Render Shell: `npm run db:deploy`
+
+#### Step 4️⃣ — Frontend: Vercel (Free Static Deployment)
+1. Go to [vercel.com](https://vercel.com) → **New Project** → Import your GitHub repo.
+2. Set **Root Directory** to `frontend`.
+3. Add environment variable:
+   - `VITE_API_URL` = `https://pms-backend.onrender.com/api/v1`
+4. Click **Deploy** → note your frontend URL.
+5. Go back to Render → set `FRONTEND_URL` = your Vercel URL → Redeploy.
+
+> [!NOTE]
+> Free-tier Render services **spin down after 15 minutes of inactivity**. The first request after sleep may take ~30 seconds. This is normal for free tier. Upgrade to Render Starter ($7/mo) for always-on.
+
+---
+
+
 
 ## 📋 Table of Contents
 
